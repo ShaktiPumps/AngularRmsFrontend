@@ -1,0 +1,94 @@
+<div class="ml-2 mr-2 rtl:ml-2 mt-8 !pb-4" >
+    <div style="width: 3000px; " class="mat-elevation-z8" [@animate]="{value:'*',params:{y:'50px',delay:'300ms'}}">
+        <mat-table [dataSource]="dataSource" matSort >
+  
+            <ng-container matColumnDef="id">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> ID </mat-header-cell>
+              <mat-cell *matCellDef="let row" data-label="id"> {{row.id}} </mat-cell>
+            </ng-container>
+        
+            <ng-container matColumnDef="age" >
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Device No. </mat-header-cell>
+              <mat-cell *matCellDef="let row" data-label="progress"> {{row.age}} </mat-cell>
+            </ng-container>
+        
+            <ng-container matColumnDef="name" sticky> 
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Date </mat-header-cell>
+              <mat-cell *matCellDef="let row" data-label="name"> {{row.name}} </mat-cell>
+            </ng-container>
+        
+            <ng-container matColumnDef="gender" sticky>
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Time </mat-header-cell>
+              <mat-cell *matCellDef="let row" [style.color]="row.color" data-label="color"> {{row.gender}} </mat-cell>
+            </ng-container>
+  
+            <ng-container matColumnDef="company">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Customer Name </mat-header-cell>
+              <mat-cell *matCellDef="let row" [style.color]="row.color" data-label="color"> {{row.company}} </mat-cell>
+            </ng-container>
+  
+            <ng-container matColumnDef="soft">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Software Version </mat-header-cell>
+              <mat-cell *matCellDef="let row" [style.color]="row.color" data-label="color"> {{row.age}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="M66">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> M66 Version </mat-header-cell>
+              <mat-cell *matCellDef="let row" [style.color]="row.color" data-label="color"> {{row.age}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Frequency">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Operating Frequency (Hz) </mat-header-cell>
+              <mat-cell *matCellDef="let row" [style.color]="row.color" data-label="color"> {{row.age}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Operating">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Operating Voltage (V) </mat-header-cell>
+              <mat-cell *matCellDef="let row" [style.color]="row.color" data-label="color"> {{row.age}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Current">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Motor Current (A) </mat-header-cell>
+              <mat-cell *matCellDef="let row" [style.color]="row.color" data-label="color"> {{row.age}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="RPM">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Motor RPM (RPM) </mat-header-cell>
+              <mat-cell *matCellDef="let row" [style.color]="row.color" data-label="color"> {{row.age}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Flow">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Flow of Water (LPM) </mat-header-cell>
+              <mat-cell *matCellDef="let row" [style.color]="row.color" data-label="color"> {{row.age}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Voltage">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> PV Voltage (V) </mat-header-cell>
+              <mat-cell *matCellDef="let row" [style.color]="row.color" data-label="color"> {{row.age}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="PV">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> PV Current (A) </mat-header-cell>
+              <mat-cell *matCellDef="let row" [style.color]="row.color" data-label="color"> {{row.age}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Input">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Input Power (kW) </mat-header-cell>
+              <mat-cell *matCellDef="let row" [style.color]="row.color" data-label="color"> {{row.age}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Fault">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Fault Bit </mat-header-cell>
+              <mat-cell *matCellDef="let row" [style.color]="row.color" data-label="color"> {{row.age}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="INV">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> INV ModuleTemp (&deg;C) </mat-header-cell>
+              <mat-cell *matCellDef="let row" [style.color]="row.color" data-label="color"> {{row.age}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="VFD">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> VFD Temp(&deg;C) </mat-header-cell>
+              <mat-cell *matCellDef="let row" [style.color]="row.color" data-label="color"> {{row.age}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Today">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Today VFD Energy (kWh) </mat-header-cell>
+              <mat-cell *matCellDef="let row" [style.color]="row.color" data-label="color"> {{row.age}} </mat-cell>
+            </ng-container>
+        
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;">
+            </mat-row>
+        </mat-table>
+        <mat-paginator [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
+    </div>
+  </div>
+  

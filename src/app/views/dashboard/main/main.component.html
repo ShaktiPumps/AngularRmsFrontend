@@ -1,0 +1,263 @@
+<!-- COIN ROW -->
+
+<div class="flex flex-wrap" [@animate]="{value:'*',params:{delay:'600ms',scale:'.9'}}">
+  <div class="w-full sm:w-1/2 lg:w-1/5">
+    <mat-card class="!rounded-full !flex !flex-row flex-wrap items-center p-4">
+      <!-- <img class="h-12 w-12 rounded-full" src="assets/images/cryptocurrencies/BTC.png" alt=""> -->
+      <mat-icon class="text-green rms-circle" [style]="{'background-color' :'#fcc02e' }">power</mat-icon>
+      <span style="width: 20px"></span>
+      <div>
+        <p class="m-0 text-14 text-muted line-height-1">Online Devices</p>
+        <span class="text-18 font-bold text-green">{{onlineDevices}} <span
+            class="material-icons mat-icon-18">arrow_drop_up</span></span>
+      </div>
+    </mat-card>
+  </div>
+  <div class="w-full sm:w-1/2 lg:w-1/5">
+    <mat-card class="!rounded-full !flex !flex-row flex-wrap items-center p-4">
+      <!-- <img class="h-12 w-12 rounded-full" src="assets/images/cryptocurrencies/ETH.png" alt=""> -->
+      <mat-icon class="text-yellow rms-circle" >online_prediction</mat-icon>
+      <span style="width: 20px"></span>
+      <div>
+        <p class="m-0 text-14 text-muted line-height-1">Connected Devices</p>
+        <span class="text-18 font-bold text-red">{{offlineDevices}} <span
+            class="material-icons mat-icon-18">arrow_drop_down</span></span>
+      </div>
+    </mat-card>
+  </div>
+  <div class="w-full sm:w-1/2 lg:w-1/5">
+    <mat-card class="!rounded-full !flex !flex-row flex-wrap items-center p-4">
+      <!-- <img class="h-12 w-12 rounded-full" src="assets/images/cryptocurrencies/LTC.png" alt=""> -->
+      <mat-icon class="rms-circle" >signal_cellular_nodata</mat-icon>
+      <span style="width: 20px"></span>
+      <div>
+        <p class="m-0 text-14 text-muted line-height-1">Disconnected Devices</p>
+        <span class="text-18 font-bold text-green">{{disconnectedDevices}} <span
+            class="material-icons mat-icon-18">arrow_drop_up</span></span>
+      </div>
+    </mat-card>
+  </div>
+  <div class="w-full sm:w-1/2 lg:w-1/5">
+    <mat-card class="!rounded-full !flex !flex-row flex-wrap items-center p-4">
+      <!-- <img class="h-12 w-12 rounded-full" src="assets/images/cryptocurrencies/BTS.png" alt=""> -->
+      <mat-icon class="text-white rms-circle">device_hub</mat-icon>
+      <span style="width: 20px"></span>
+      <div>
+        <p class="m-0 text-14 text-muted line-height-1">All Devices</p>
+        <span class="text-18 font-bold text-red">{{allDevices}} <span
+            class="material-icons mat-icon-18">arrow_drop_down</span></span>
+      </div>
+    </mat-card>
+  </div>
+  <div class="w-full sm:w-1/2 lg:w-1/5">
+    <mat-card class="!rounded-full !flex !flex-row flex-wrap items-center p-4">
+      <!-- <img class="h-12 w-12 rounded-full" src="assets/images/cryptocurrencies/CNX.png" alt=""> -->
+      <mat-icon class="text-red rms-circle">add_alert</mat-icon>
+      <span style="width: 20px"></span>
+      <div>
+        <p class="m-0 text-14 text-muted line-height-1">Fault Devices</p>
+        <span class="text-18 font-bold text-green">{{faultDevices}} <span
+            class="material-icons mat-icon-18">arrow_drop_up</span></span>
+      </div>
+    </mat-card>
+  </div>
+</div>
+<!--/ COIN ROW -->
+<!-- Dashboard card row -->
+<mat-card
+  class="p-0 "
+  [@animate]="{ value: '*', params: { opacity: '0', y: '40px', delay: '200ms' } }"
+>
+  <div class="flex flex-wrap">
+    <div class="w-full lg:w-1/5 md:w-1/2">
+      <div class="text-center !pt-4 !pb-4 border-right-light">
+        <mat-icon class="text-green">power</mat-icon>
+        <h4 class="m-0 ">{{onlineDevices}}</h4>
+        <small class="m-0 ">Online Devices</small>
+      </div>
+    </div>
+    <div class="w-full lg:w-1/5 md:w-1/2">
+      <div class="text-center !pt-4 !pb-4 border-right-light">
+        <mat-icon class="text-yellow">online_prediction</mat-icon>
+        <h4 class="m-0 ">{{offlineDevices}}</h4>
+        <small class="m-0 ">Connected Devices</small>
+      </div>
+    </div>
+    <div class="w-full lg:w-1/5 md:w-1/2">
+      <div class="text-center !pt-4 !pb-4 border-right-light">
+        <mat-icon class="">signal_cellular_nodata</mat-icon>
+        <h4 class="m-0 ">{{disconnectedDevices}}</h4>
+        <small class="m-0 ">Disconnected Devices</small>
+      </div>
+    </div>
+    <div class="w-full lg:w-1/5 md:w-1/2">
+      <div class="text-center !pt-4 !pb-4 border-right-light">
+        <mat-icon class="text-blue">groups3</mat-icon>
+        <h4 class="m-0 ">{{allDevices}}</h4>
+        <small class="m-0 ">All Devices</small>
+      </div>
+    </div>
+    <div class="w-full lg:w-1/5 md:w-1/2">
+      <div class="text-center !pt-4 !pb-4">
+        <mat-icon class="text-red">add_alert</mat-icon>
+        <h4 class="m-0 ">{{faultDevices}}</h4>
+        <small class="m-0 ">Fault Devices</small>
+      </div>
+    </div>
+  </div>
+</mat-card>
+<!--/ Dashboard card row -->
+
+
+<div class="flex flex-wrap">
+  <div
+    class="w-full md:w-1/3 sm:w-1/2"
+    [@animate]="{ value: '*', params: { opacity: '0', y: '40px', delay: '250ms' } }"
+  >
+    <mat-card class="p-0 ">
+      <h6 class="ml-4 rtl:mr-4 rtl:ml-4 mt-4">Traffic vs Sales</h6>
+      <div
+        echarts
+        [options]="monthlyTrafficChartBar"
+        [autoResize]="true"
+        style="height: 216px;"
+      ></div>
+    </mat-card>
+  </div>
+
+  <div
+    class="w-full md:w-1/3 sm:w-1/2"
+    [@animate]="{ value: '*', params: { opacity: '0', y: '40px', delay: '300ms' } }"
+  >
+    <mat-card class="p-4">
+      <h6 class="">7 Day Online Report</h6>
+      <div
+        echarts
+        [options]="dailyTrafficChartBar"
+        [autoResize]="true"
+        style="height: 200px;"
+      ></div>
+    </mat-card>
+  </div>
+
+  <div
+    class="w-full md:w-1/3 sm:w-1/2"
+    [@animate]="{ value: '*', params: { opacity: '0', y: '40px', delay: '350ms' } }"
+  >
+    <mat-card class="p-0 ">
+      <h6 class=" ml-4 rtl:mr-4 rtl:ml-4 mt-4">Traffic Sources</h6>
+      <div
+        echarts
+        [options]="dailyBandwithUsage"
+        [autoResize]="true"
+        style="height: 216px;"
+      ></div>
+    </mat-card>
+  </div>
+
+  <div
+    
+    class="w-full md:w-3/5"
+    [@animate]="{ value: '*', params: { opacity: '0', y: '40px', delay: '400ms' } }"
+  >
+    <mat-card
+      class="p-0 "
+    >
+      <mat-table [dataSource]="countryTrafficStats" matSort [style]="{'max-height': '250px'}">
+        <ng-container matColumnDef="country">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            Project Name
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row" data-label="id">
+            <span class="flag-icon {{ row.flag }}"></span>
+            {{ row.country }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="visitor">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            Project Code
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row" data-label="progress">
+            {{ row.visitor }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="pageView">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            Total Installations
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row" data-label="name">
+            {{ row.pageView }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="download">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            Shifted
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row" data-label="color">
+            {{ row.download }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="bounceRate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            Complete
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row" data-label="color">
+            {{ row.bounceRate }}
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row
+          *matHeaderRowDef="[
+            'country',
+            'visitor',
+            'pageView',
+            'download',
+            'bounceRate'
+          ]"
+        ></mat-header-row>
+        <mat-row
+          *matRowDef="
+            let row;
+            columns: [
+              'country',
+              'visitor',
+              'pageView',
+              'download',
+              'bounceRate'
+            ]
+          "
+        >
+        </mat-row>
+      </mat-table>
+    </mat-card>
+  </div>
+  <div
+    class="w-full md:w-2/5"
+    [@animate]="{ value: '*', params: { opacity: '0', y: '40px', delay: '450ms' } }"
+  >
+    <mat-card class="p-0 ">
+      <div class="flex flex-wrap">
+        <div class="w-2/5 p-4">
+            <h6 class="">Traffic</h6>
+          <p class="text-24 text-green font-bold mb-0">
+            27% <span class="material-icons">arrow_drop_up</span>
+          </p>
+          <p class="m-0">This Week</p>
+        </div>
+        <div class="w-3/5">
+          <div
+            echarts
+            [options]="trafficGrowthChart"
+            [autoResize]="true"
+            style="height: 150px; right: -1px"
+          ></div>
+        </div>
+      </div>
+    </mat-card>
+
+  </div>
+</div>
