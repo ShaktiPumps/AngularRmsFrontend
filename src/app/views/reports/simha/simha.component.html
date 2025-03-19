@@ -1,0 +1,67 @@
+<div class="page-layout overflow-hidden pb-8">
+    <div class="header-bg blue"></div>
+  
+    <div class="content">
+      <div class="container-fluid p-6 flex justify-center align-center">
+        <form [formGroup]="basicForm">
+          <mat-form-field class="!mr-4 rtl:ml-4">
+            <input
+              matInput
+              type="text"
+              name="deviceNo"
+              placeholder="Device No"
+              id="deviceNo"
+            />
+          </mat-form-field>
+          <mat-form-field class="!mr-4 rtl:ml-4">
+            <input
+              formControlName="startDate"
+              matInput
+              [matDatepicker]="picker"
+              placeholder="Start Date"
+              required
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field class="!mr-4 rtl:ml-4">
+            <input
+              formControlName="endDate"
+              matInput
+              [matDatepicker]="endpicker"
+              placeholder="End Date"
+              required
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="endpicker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #endpicker></mat-datepicker>
+          </mat-form-field>
+          <button mat-raised-button class="searchBTN">Search</button>
+          <!-- <mat-form-field>
+            <button mat-raised-button >Search</button>
+          </mat-form-field> -->
+        </form>
+      </div>
+      <!-- <h1 class="text-white m-0">Full width card tab</h1> -->
+  
+      <div class="content-body">
+        <div class="content-card mat-bg-default" style="padding-right: 10px; ">
+          <mat-tab-group>
+            <mat-tab label="Simha Report" >
+              <app-datareport ></app-datareport>
+            </mat-tab>
+            <mat-tab label="Simha Cumulative Report" >
+              <app-cumulative ></app-cumulative>
+            </mat-tab>
+            <!-- <mat-tab label="Third"> Content 3 </mat-tab> -->
+          </mat-tab-group>
+        </div>
+      </div>
+    </div>
+  </div>
+  

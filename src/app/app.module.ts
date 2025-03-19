@@ -1,10 +1,10 @@
 import { NgModule, ErrorHandler } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouteReuseStrategy, RouterModule } from '@angular/router';
 import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LayoutModule } from '@angular/cdk/layout';
 import { MatCardModule } from '@angular/material/card';
-
+import { DataReportComponent } from './views/reports/sun-shakti/data-report/data-report.component';
 // import { GestureConfig } from '@angular/material/core';
 import {
   PerfectScrollbarModule,
@@ -26,6 +26,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ErrorHandlerService } from './shared/services/error-handler.service';
 import { TokenInterceptor } from './shared/interceptors/token.interceptor';
 import { MatChipsModule as MatChipsModule } from '@angular/material/chips';
+// import { FormsModule } from '@angular/forms';
 
 
 // AoT requires an exported function for factories
@@ -46,18 +47,19 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     LayoutModule,
     MatCardModule,
     MatChipsModule,
-    
+    // FormsModule,
+    DataReportComponent,
     PerfectScrollbarModule,
     TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      }
+        loader: {
+            provide: TranslateLoader,
+            useFactory: HttpLoaderFactory,
+            deps: [HttpClient]
+        }
     }),
     InMemoryWebApiModule.forRoot(InMemoryDataService, { passThruUnknownUrl: true }),
-    RouterModule.forRoot(rootRouterConfig, { useHash: false })
-  ],
+    RouterModule.forRoot(rootRouterConfig, { useHash: false }),
+],
   declarations: [AppComponent],
   providers: [
     { provide: ErrorHandler, useClass: ErrorHandlerService },

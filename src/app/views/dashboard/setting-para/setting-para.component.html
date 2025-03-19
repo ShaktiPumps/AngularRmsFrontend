@@ -1,0 +1,71 @@
+<div *ngIf="apiData?.response?.length; else noData">
+
+    <div class="category-tabs">
+      <button
+        *ngFor="let category of apiData.response"
+        (click)="selectCategory(category)"
+        [class.active]="selectedCategory === category"
+      >
+        {{ category.parametername }}
+      </button>
+    </div>
+
+    <div class="table-container" *ngIf="selectedCategory">
+      <h3>{{ selectedCategory.parametername }}</h3>
+  
+      <table>
+        <thead>
+          <tr>
+            <th *ngFor="let key of getKeys(selectedCategory.parameterList[0])">
+              {{ key }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let param of selectedCategory.parameterList">
+            <td *ngFor="let key of getKeys(param)">
+              {{ param[key] }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <ng-template #noData>
+    <p>No data available.</p>
+  </ng-template>
+  
+
+
+
+
+<!-- <div *ngIf="apiData?.response?.length; else noData">
+    <div *ngFor="let category of apiData.response">
+      <h3>{{ category.parametername }}</h3>
+      <div class="table-container">
+        <table border="2" cellspacing="0" cellpadding="5">
+          <thead>
+            <tr>
+              <th *ngFor="let key of getKeys(category.parameterList[0])">
+                {{ key }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let param of category.parameterList">
+              <td *ngFor="let key of getKeys(param)">
+                {{ param[key] }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <ng-template #noData>
+    <p>No data available.</p>
+  </ng-template>
+   -->
+
+   

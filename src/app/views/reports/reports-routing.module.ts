@@ -1,11 +1,27 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { Simha2Component } from './simha2/simha2.component';
+import { SimhaComponent } from './simha/simha.component';
+import { SunShaktiComponent } from './sun-shakti/sun-shakti.component';
 
 export const routes: Routes = [
+  // {
+  //   path:'faultReport',
+  //   // component:,
+  // },
   {
     path: 'simha2',
     component: Simha2Component,
+    // data: { title: 'Simha Reports', breadcrumb: 'Simha Reports' }
+  },
+  {
+    path: 'simha',
+    component: SimhaComponent,
+    // data: { title: 'Simha Reports', breadcrumb: 'Simha Reports' }
+  },
+  {
+    path: 'sunShakti',
+    component: SunShaktiComponent,
     // data: { title: 'Simha Reports', breadcrumb: 'Simha Reports' }
   },
 ];

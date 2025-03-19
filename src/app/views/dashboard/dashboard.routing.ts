@@ -9,50 +9,23 @@ import { UserRoleGuard } from 'app/shared/guards/user-role.guard';
 import { MainComponent } from './main/main.component';
 import { config } from 'config';
 import { RealtimeComponent } from './realtime/realtime.component';
+import { SettingParaComponent } from './setting-para/setting-para.component';
 
 export const DashboardRoutes: Routes = [
-
-  // {
-  //   path: '',
-  //   component: MainComponent,
-  //   // data: { title: 'Analytics', breadcrumb: 'Analytics' }
-    
-  // },{
-  //   path: '',
-  //   // component: MainComponent,
-  //   // data: { title: 'Analytics', breadcrumb: 'Analytics' }
-  //   children: [{
-  //     path: 'realtime',
-  //     component: RealtimeComponent,
-  //     data: { title: 'RealtimeComponent', breadcrumb: 'Realtime' }
-  //   }]
-  // }
-
-  {
+ {
     path: '',
     component: MainComponent,
-    // data: { title: 'Learning management', breadcrumb: 'Learning management' }
   },
   {
     path: 'realtime',
     component: RealtimeComponent,
-    // data: { title: 'Dashboard', breadcrumb: 'RealTime' }
-  },
+  },  
   // {
-  //   path: 'analytics-alt',
-  //   component: AnalyticsAltComponent,
-  //   data: { title: 'Analytics Alternative', breadcrumb: 'Analytics Alternative' }
-  // },
-  // {
-  //   path: 'crypto',
-  //   component: CryptocurrencyComponent,
-  //   data: { title: 'Cryptocurrency', breadcrumb: 'Cryptocurrency' }
-  // },
-  // {
-  //   path: 'dark',
-  //   component: DashboardDarkComponent,
-  //   data: { title: 'Dark Cards', breadcrumb: 'Dark Cards' }
+  //   path: 'settingpara',
+  //   component: SettingParaComponent
   // }
-
-  
+  {
+    path: 'settingpara',
+    loadComponent: () => import('./setting-para/setting-para.component').then(m => m.SettingParaComponent) // ✅ Correct way to load standalone component
+  }
 ];

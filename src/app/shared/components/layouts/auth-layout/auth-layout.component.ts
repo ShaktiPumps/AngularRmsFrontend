@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
   selector: 'app-auth-layout',
   templateUrl: './auth-layout.component.html'
 })
-export class AuthLayoutComponent implements OnInit {
+export class   AuthLayoutComponent implements OnInit {
 
   constructor(
     public translate: TranslateService,

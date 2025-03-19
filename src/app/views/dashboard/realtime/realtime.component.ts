@@ -3,15 +3,28 @@ import { Component, OnInit, ChangeDetectorRef, signal } from '@angular/core';
 import { AfterViewInit } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatSnackBar as MatSnackBar } from '@angular/material/snack-bar';
-import { egretAnimations } from "app/shared/animations/egret-animations";
+import { egretAnimations } from 'app/shared/animations/egret-animations';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatFormField } from '@angular/material/form-field';
-import { Router } from '@angular/router';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
-// import { NgChartsModule } from 'ng2-charts';
+import { Router, RouterLink } from '@angular/router';
 import { NgxEchartsModule } from 'ngx-echarts';
-import { interval, Subscription } from 'rxjs';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { MatFormField } from '@angular/material/form-field';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { NgApexchartsModule } from 'ng-apexcharts';
+import { DataService } from 'app/shared/services/data.service'; 
+// import {
+//   ApexAxisChartSeries,
+//   ApexChart,
+//   ApexDataLabels,
+//   ApexPlotOptions,
+//   ApexYAxis,
+//   ApexXAxis,
+//   ApexFill,
+//   ApexTitleSubtitle,
+// } from 'ng-apexcharts';
+// import { interval, Subscription } from 'rxjs';
+// import { NgChartsModule } from 'ng2-charts';
 
 export interface PeriodicElement {
   name: string;
@@ -21,389 +34,369 @@ export interface PeriodicElement {
 }
 
 const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'PV Voltage', weight: 330.10, symbol: 'V'},
-  {position: 2, name: 'PV Current', weight: 0.00, symbol: 'V'},
-  {position: 3, name: 'Operating Voltage', weight: 0.00, symbol: 'V'},
-  {position: 4, name: 'Motor Current', weight: 9.0122, symbol: 'A'},
-  {position: 5, name: 'Operating Frequency', weight: 10.811, symbol: 'HZ'},
-  {position: 6, name: 'Motor Power', weight: 12.0107, symbol: 'KW'},
-  {position: 7, name: 'Motor RPM', weight: 14.0067, symbol: 'RPM'},
-  {position: 8, name: 'Water Flow', weight: 15.9994, symbol: 'LPM'},
-  {position: 9, name: 'Today Energy', weight: 18.9984, symbol: 'KWH'},
-  {position: 10, name: 'Total Energy', weight: 20.1797, symbol: 'KWH'},
+  { position: 1, name: 'PV Voltage', weight: 330.1, symbol: 'V' },
+  { position: 2, name: 'PV Current', weight: 0.0, symbol: 'V' },
+  { position: 3, name: 'Operating Voltage', weight: 0.0, symbol: 'V' },
+  { position: 4, name: 'Motor Current', weight: 9.0122, symbol: 'A' },
+  { position: 5, name: 'Operating Frequency', weight: 10.811, symbol: 'HZ' },
+  { position: 6, name: 'Motor Power', weight: 12.0107, symbol: 'KW' },
+  { position: 7, name: 'Motor RPM', weight: 14.0067, symbol: 'RPM' },
+  { position: 8, name: 'Water Flow', weight: 15.9994, symbol: 'LPM' },
+  { position: 9, name: 'Today Energy', weight: 18.9984, symbol: 'KWH' },
+  { position: 10, name: 'Total Energy', weight: 20.1797, symbol: 'KWH' },
 ];
-
-
-
 
 @Component({
   selector: 'app-realtime',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatCardModule, MatIconModule, MatFormField,NgxEchartsModule ,MatSlideToggle],
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatCardModule,
+    MatIconModule,
+    NgxEchartsModule,
+    HttpClientModule,
+    RouterLink,
+    MatFormField,
+    MatSlideToggle,
+    NgApexchartsModule,
+  ],
   templateUrl: './realtime.component.html',
   styleUrl: './realtime.component.scss',
-  animations: egretAnimations
+  animations: egretAnimations,
 })
-
-
-
-export class RealtimeComponent implements OnInit, AfterViewInit  {
+export class RealtimeComponent implements OnInit, AfterViewInit {
   data = [
     {
       timestamp: '11-06-24 09:45:17',
-      value: 310.10,
-    },{
-      timestamp: '11-06-24 09:45:23',
-      value: 300.10,
-    },{
-      timestamp: '11-06-24 09:45:28',
-      value: 330.10,
-    },{
-      timestamp: '11-06-24 09:45:35',
-      value: 340.10,
-    },{
-      timestamp: '11-06-24 09:45:42',
-      value: 360.10,
-    },{
-      timestamp: '11-06-24 09:45:48',
-      value: 300.10,
-    },{
-      timestamp: '11-06-24 09:45:55',
-      value: 350.10,
-    },{
-      timestamp: '11-06-24 09:46:02',
-      value: 370.10,
-    },{
-      timestamp: '11-06-24 09:46:10',
-      value: 330.10,
-    }
-  ]
+      value: 0.4,
+    },
+    {
+      timestamp: '11-06-24 09:45:17',
+      value: 0.6,
+    },
+    {
+      timestamp: '11-06-24 09:45:17',
+      value: 0.2,
+    },
+    {
+      timestamp: '11-06-24 09:45:17',
+      value: 0.8,
+    },
+  ];
   
-  currDate: Date = new Date();
-
-  displayedColumns: string[] = [ 'name', 'weight', 'symbol'];
-  // displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  dataSource;
+  // data: any[] = [];
   monthlyTrafficChartBar: any;
-  
-  constructor(private cdr: ChangeDetectorRef,
+  dataSource: any;
+  deviceDetails: any = {};
+  isLoading: boolean = true;
+  error: string | null = null;
+  displayResponse: any[] = [];
+  displayColumns: string[] = ['name', 'value', 'unit'];
+
+  apiData: any = null;
+  currDate: string | null = null;
+  defaultDate: Date = new Date();
+  intervalId: any;
+  productStatus: string = '';
+  pstatusColor: string = '';
+
+  constructor(
+    private cdr: ChangeDetectorRef,
     private snack: MatSnackBar,
-    private router: Router 
-  ) { }
+    private router: Router,
+    private http: HttpClient,
+    private dataService: DataService,
+  ) {}
 
-//   private intervalSubscription: Subscription;
-// realvalue = false;
-// realtime(realData){
-//   this.realvalue = !this.realvalue;
-//   if(this.realvalue){
-//     this.fetchData(realData);
-//     this.intervalSubscription =interval(5000).subscribe(() => this.fetchData(realData));
+  navigateToSettingPara() {
+    this.dataService.getData().subscribe((response) => {
+      this.dataService.setSharedData(response); // Save data in service
+      this.router.navigate(['/dashboard/settingpara']); // Navigate to new component
+    },
+    (error) => {
+      console.error('API Error:', error);
+    }
+  );
+  }
 
-//   } else{
-//     if (this.intervalSubscription) {
-//       this.intervalSubscription.unsubscribe();
-//     }
-//   }
-  
-// }
-
-  fetchData(gdata) {
-    console.log('fetching', gdata[0].timestamp);
-    // (data) => {
-
-    
-      // Process your data here and update chartData and chartLabels
-      const newData = gdata.map(item => item.value);
-      const newData2 = gdata.map(item => this.getRandomInt(250, 300)); // Adjust according to your API response
-      const newLabels = gdata.map(item => item.timestamp); // Adjust according to your API response
-      console.log('fetching func', newLabels);
-      // this.monthlyTrafficChartBar.xAxis.data = newLabels;
-      // this.monthlyTrafficChartBar.series[0].data = newLabels;
-      this.monthlyTrafficChartBar = {
-        tooltip: {
-          trigger: "axis",
-    
-          axisPointer: {
-            animation: true
-          }
-        },
-        grid: {
-          left: "0",
-          top: "4%",
-          right: "0",
-          bottom: "0"
-        },
-        xAxis: {
-          type: "category",
-          boundaryGap: false,
-          data: newLabels,
-          axisLabel: {
-            show: false
-          },
-          axisLine: {
-            lineStyle: {
-              show: false
-            }
-          },
-          axisTick: {
-            show: false
-          },
-          splitLine: {
-            show: false
-          }
-        },
-        yAxis: {
-          type: "value",
-          min: 100,
-          max: 400,
-          interval: 50,
-          axisLabel: {
-            show: false
-          },
-          axisLine: {
-            show: false
-          },
-          axisTick: {
-            show: false
-          },
-          splitLine: {
-            show: false
-          }
-        },
-        series: [
-          {
-            name: "Current",
-            type: "line",
-            smooth: true,
-            data: newData,
-            symbolSize: 8,
-            showSymbol: false,
-            lineStyle: {
-              opacity: 0,
-              width: 0
-            },
-            itemStyle: {
-              borderColor: "#f6be1a"
-            },
-            areaStyle: {
-              color: "#f6be1a",
-              opacity: 1
-            }
-          },
-          {
-            name: "WaterFlow",
-            type: "line",
-            smooth: true,
-            data: newData2,
-            symbolSize: 8,
-            showSymbol: false,
-            lineStyle: {
-              opacity: 0,
-              width: 0
-            },
-            itemStyle: {
-              borderColor: "#e91f63"
-            },
-            areaStyle: {
-              color: "#256fa9",
-              opacity: 1
-            }
-          }
-        ]
-      };
-    // };
-    this.data.push({
-        timestamp: '11-06-24 09:46:17',
-        value: this.getRandomInt(250, 400),
+  toggleApiCall(event: any) {
+    if (event.target.checked) {
+      this.fetchDeviceRealTimeComponent();
+      this.intervalId = setInterval(
+        () => this.fetchDeviceRealTimeComponent(),
+        10000
+      );
+    } else {
+      if (this.intervalId) {
+        clearInterval(this.intervalId);
+        this.intervalId = null;
       }
-    );
-    this.data.shift();
+    }
   }
 
-getRandomInt(min, max) {
+  updateChart() {
+    const newData = this.data.map((item) => parseFloat(item.value.toFixed(2)));
+
+    this.monthlyTrafficChartBar = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' },
+        formatter: (params) => {
+          let result = `<b>Value</b><br/>`;
+          params.forEach((item) => {
+            result += `<span style="display:inline-block;width:10px;height:10px;background-color:${item.color};border-radius:50%;margin-right:5px;"></span>`;
+            result += `${item.seriesName}: <b>${parseFloat(item.value).toFixed(
+              2
+            )}</b><br/>`;
+          });
+          return result;
+        },
+      },
+      grid: {
+        left: '3%',
+        top: '10%',
+        right: '3%',
+        bottom: '5%',
+        containLabel: true,
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: true,
+        data: new Array(newData.length).fill(''),
+        axisLabel: { show: false },
+        axisLine: { show: false },
+        axisTick: { show: false },
+        splitLine: { show: false },
+      },
+      yAxis: {
+        type: 'value',
+        // min: -1, // Set min to -2
+        max: 1,
+        interval: 0.2,
+        axisLabel: {
+          show: true,
+          formatter: (value) => value.toFixed(1),
+        },
+        axisLine: {
+          show: true,
+          lineStyle: { color: '#aaa' },
+        },
+        axisTick: { show: true },
+        splitLine: {
+          show: true,
+          lineStyle: { type: 'dashed' },
+        },
+      },
+      series: [
+        {
+          name: 'Current',
+          type: 'line',
+          smooth: true,
+          data: newData,
+          symbolSize: 8,
+          showSymbol: false,
+          lineStyle: {
+            opacity: 1,
+            width: 2,
+            color: '#f6be1a',
+          },
+          itemStyle: {
+            borderColor: '#f6be1a',
+          },
+          areaStyle: {
+            color: '#f6be1a',
+            opacity: 1,
+          },
+        },
+        {
+          name: 'WaterFlow',
+          type: 'line',
+          smooth: true,
+          symbolSize: 8,
+          showSymbol: false,
+          lineStyle: {
+            opacity: 1,
+            width: 2,
+            color: '#256fa9',
+          },
+          itemStyle: {
+            borderColor: '#256fa9',
+          },
+          areaStyle: {
+            color: '#256fa9',
+            opacity: 1,
+          },
+        },
+      ],
+    };
+  }
+
+  fetchDeviceDisplayComponent() {
+    this.isLoading = true;
+    this.error = null;
+
+    this.http
+      .get<any>(
+        'http://localhost:9880/RMS/Device/realTimeDisplay?DeviceNo=7f-0135-0-13-06-23-0'
+      )
+      .subscribe(
+        (response) => {
+          this.deviceDetails = response.deviceDetails;
+          if (Array.isArray(response)) {
+            this.displayResponse = response.map((item) => ({
+              mpname: item.mpname,
+              value: item.mpindex,
+              unit: item.unit,
+            }));
+          } else if (response && Array.isArray(response.displayResponse)) {
+            this.displayResponse = response.displayResponse.map((item) => ({
+              mpname: item.mpname,
+              value: item.mpindex,
+              unit: item.unit,
+            }));
+          } else {
+            console.error('Unexpected API response format:', response);
+          }
+        },
+        (error) => {
+          console.error('Error fetching API data:', error);
+        }
+      );
+  }
+
+  fetchDeviceRealTimeComponent() {
+    this.isLoading = true;
+    this.error = null;
+
+    this.http
+      .get<any>(
+        'http://localhost:9880/RMS/Device/DataMonitor?DeviceNo=7f-0135-0-13-06-23-0'
+      )
+      .subscribe(
+        (response) => {
+          if (response.status && response.realTimeRespomnse.length > 0) {
+            const realTimeData = response.realTimeRespomnse[0];
+            const pvShow = response.pvShow;
+            const timestamp = new Date(realTimeData.rmdate).toLocaleString();
+            const RMPVVolt = parseFloat(realTimeData.rmpvvolt) || 0;
+            const RMPVCurr = parseFloat(realTimeData.rmpvcurr) || 0;
+            const RMINVModTemp = parseFloat(realTimeData.rminvmodTemp) || 0;
+            const RMDSPTemp = parseFloat(realTimeData.rmdsptemp) || 0;
+
+            const calculatedValue: number = pvShow
+              ? RMPVVolt * RMPVCurr + RMINVModTemp * RMDSPTemp
+              : RMPVVolt * RMPVCurr;
+
+            this.data.push({
+              timestamp: timestamp,
+              value: calculatedValue,
+            });
+
+            if (this.data.length > 10) {
+              this.data.shift();
+            }
+
+            this.updateChart();
+          }
+
+          if (response && response.realTimeRespomnse?.length > 0) {
+            const realTimeData = response.realTimeRespomnse[0];
+            this.currDate = realTimeData.rmdate
+              ? new Date(realTimeData.rmdate).toLocaleString()
+              : this.defaultDate.toISOString();
+            this.productStatus = response.productStatus || '';
+            this.pstatusColor = response.pstatusColor || '';
+            this.cdr.detectChanges();
+
+            const apiMapping: { [key: string]: string } = {
+              M1: 'rmlatitude',
+              M2: 'rmlongitude',
+              M3: 'rmdayOfDate',
+              M4: 'rmmonthOfDate',
+              M5: 'rmyearOfDate',
+              M6: 'rmhourOfTime',
+              M7: 'rmminOfTime',
+              M8: 'rmstatusOfProduct',
+              M9: 'rmoperatingFreq',
+              M10: 'rmoperatingVolt',
+              M11: 'rmmotorCurr',
+              M12: 'rmrpm',
+              M13: 'rmlpm',
+              M14: 'rmpvvolt',
+              M15: 'rmpvcurr',
+              M16: 'rmfaultBit',
+              M17: 'rminvmodTemp',
+              M18: 'rmhstemp',
+              M19: 'rmdsptemp',
+              M20: 'rmsingalStr',
+              M21: 'r1',
+              M22: 'r2',
+              M23: 'r3',
+              M24: 'r4',
+              M25: 'r5',
+              M26: 'rmremark[0]',
+              M27: 'rmremark[1]',
+              M28: 'rmremark[2]',
+              M29: 'rmremark[3]',
+              M30: 'rmremark[4]',
+              M31: 'rmremark[5]',
+              M32: 'rmremark[6]',
+              M33: 'rmremark[7]',
+              M34: 'rmremark[8]',
+              M35: 'rmremark[9]',
+              M36: 'rmremark[10]',
+              M37: 'rmremark[11]',
+              M38: 'rmremark[12]',
+              M39: 'rmremark[13]',
+              M40: 'rmremark[14]',
+              M41: 'rmremark[15]',
+              M42: 'rmremark[16]',
+              M43: 'rmremark[17]',
+              M44: 'rmremark[18]',
+              M45: 'rmremark[19]',
+              M46: 'rmremark[20]',
+              M47: 'rmremark[21]',
+              M48: 'rmremark[22]',
+              M49: 'rmremark[23]',
+              M50: 'rmremark[24]',
+            };
+
+            Object.keys(apiMapping).forEach((key) => {
+              const mappedKey = apiMapping[key];
+              const value = realTimeData[mappedKey];
+
+              const element = document.getElementById(key);
+              if (element) {
+                element.innerText = value !== undefined ? value : 'N/A';
+              }
+            });
+
+            console.log('Updated Table Data:', realTimeData);
+          } else {
+            console.error('Unexpected API response format:', response);
+          }
+        },
+        (error) => {
+          console.error('Error fetching API data:', error);
+        }
+      );
+  }
+
+  getRandomInt(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-
-  ngOnInit() {
-    
-    this.fetchData(this.data);
-    interval(3000).subscribe(() => this.fetchData(this.data));
-    setTimeout(() => {
-    this.dataSource = ELEMENT_DATA;
-    this.cdr.detectChanges()
-    console.log(this.router.url);
-  })
-  // this.monthlyTrafficChartBar = {
-  //   tooltip: {
-  //     trigger: "axis",
-
-  //     axisPointer: {
-  //       animation: true
-  //     }
-  //   },
-  //   grid: {
-  //     left: "0",
-  //     top: "4%",
-  //     right: "0",
-  //     bottom: "0"
-  //   },
-  //   xAxis: {
-  //     type: "category",
-  //     boundaryGap: false,
-  //     data: [  // Keys
-  //       "Jan",
-  //       "Feb",
-  //       "Mar",
-  //       "Apr",
-  //       "May",
-  //       "Jun",
-  //       "Jul",
-  //       "Aug",
-  //       "Sept",
-  //       "Oct",
-  //       "Nov",
-  //       "Dec"
-  //     ],
-  //     axisLabel: {
-  //       show: false
-  //     },
-  //     axisLine: {
-  //       lineStyle: {
-  //         show: false
-  //       }
-  //     },
-  //     axisTick: {
-  //       show: false
-  //     },
-  //     splitLine: {
-  //       show: false
-  //     }
-  //   },
-  //   yAxis: {
-  //     type: "value",
-  //     min: 0,
-  //     max: 200,
-  //     interval: 50,
-  //     axisLabel: {
-  //       show: false
-  //     },
-  //     axisLine: {
-  //       show: false
-  //     },
-  //     axisTick: {
-  //       show: false
-  //     },
-  //     splitLine: {
-  //       show: false
-  //     }
-  //   },
-  //   series: [
-  //     {
-  //       name: "Visit",
-  //       type: "line",
-  //       smooth: true,
-  //       data: [
-  //         140,
-  //         135,
-  //         95,
-  //         115,
-  //         95,
-  //         126,
-  //         93,
-  //         145,
-  //         115,
-  //         140,
-  //         135,
-  //         95,
-  //         115,
-  //         95,
-  //         126,
-  //         125,
-  //         145,
-  //         115,
-  //         140,
-  //         135,
-  //         95,
-  //         115,
-  //         95,
-  //         126,
-  //         93,
-  //         145,
-  //         115,
-  //         140,
-  //         135,
-  //         95
-  //       ],
-  //       symbolSize: 8,
-  //       showSymbol: false,
-  //       lineStyle: {
-  //         opacity: 0,
-  //         width: 0
-  //       },
-  //       itemStyle: {
-  //         borderColor: "#f6be1a"
-  //       },
-  //       areaStyle: {
-  //         color: "#f6be1a",
-  //         opacity: 1
-  //       }
-  //     },
-  //     {
-  //       name: "Sales",
-  //       type: "line",
-  //       smooth: true,
-  //       data: [
-  //         50,
-  //         70,
-  //         65,
-  //         84,
-  //         75,
-  //         80,
-  //         70,
-  //         50,
-  //         70,
-  //         65,
-  //         145,
-  //         75,
-  //         80,
-  //         70,
-  //         50,
-  //         70,
-  //         65,
-  //         94,
-  //         75,
-  //         80,
-  //         70,
-  //         50,
-  //         70,
-  //         65,
-  //         86,
-  //         75,
-  //         80,
-  //         70,
-  //         50,
-  //         70
-  //       ],
-  //       symbolSize: 8,
-  //       showSymbol: false,
-  //       lineStyle: {
-  //         opacity: 0,
-  //         width: 0
-  //       },
-  //       itemStyle: {
-  //         borderColor: "#e91f63"
-  //       },
-  //       areaStyle: {
-  //         color: "#256fa9",
-  //         opacity: 1
-  //       }
-  //     }
-  //   ]
-  // };
-}
-  ngAfterViewInit() {
-    
   }
 
+  ngOnInit(): void {
+    this.dataSource = ELEMENT_DATA;
+    this.cdr.detectChanges();
+    this.fetchDeviceDisplayComponent();
+  }
+  ngOnDestroy(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+  }
+
+  ngAfterViewInit() {}
 }

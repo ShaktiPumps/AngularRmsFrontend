@@ -44,13 +44,16 @@ export const rootRouterConfig: Routes = [
       {
         path: 'reports',
         loadChildren: () => import('./views/reports/reports.module').then(m => m.ReportsModule),
-        // data: { title: 'Dashboard', breadcrumb: 'DASHBOARD'}
       },
+      // {
+      //   path: 'reports',
+      //   loadChildren: () => import('./views/reports/reports.module').then(m => m.ReportsModule),
+      //   // data: { title: 'Dashboard', breadcrumb: 'DASHBOARD'}
+      // },
       {
         path: 'search',
         loadChildren: () => import('./views/search-view/search-view.module').then(m => m.SearchViewModule)
       },
-      
     ]
   },
   {

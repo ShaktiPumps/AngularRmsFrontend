@@ -8,21 +8,22 @@
           <p class="text-muted m-0">Sign in to your account</p>
         </div>
 
-        <p *ngIf="errorMsg" class="text-center"><small class="text-red">{{errorMsg}}</small></p>
+        <!-- <p *ngIf="errorMsg" class="text-center"><small class="text-red">{{errorMsg}}</small></p> -->
         
         <form [formGroup]="signinForm" (ngSubmit)="signin()">
           <div class="">
             <mat-form-field class="full-width">
               <input
                 matInput
-                name="username"
-                [formControl]="signinForm.controls['username']"
-                placeholder="Username"
+                type="text"
+                name="userName"
+                [formControl]="signinForm.controls['userName']"
+                placeholder="userName"
                 value="">
             </mat-form-field>
-            <small 
-              *ngIf="signinForm.controls['username'].hasError('required') && signinForm.controls['username'].touched" 
-              class="form-error-msg"> Username is required </small>
+            <!-- <small 
+              *ngIf="signinForm.controls['userName'].hasError('required') && signinForm.controls['username'].touched" 
+              class="form-error-msg"> Username is required </small> -->
           </div>
 
           <div class="">
@@ -35,9 +36,9 @@
                 placeholder="Password" 
                 value="">
             </mat-form-field>
-            <small 
+            <!-- <small 
               *ngIf="signinForm.controls['password'].hasError('required') && signinForm.controls['password'].touched" 
-              class="form-error-msg"> Password is required </small>
+              class="form-error-msg"> Password is required </small> -->
           </div>
           
           <div class="!pb-4">

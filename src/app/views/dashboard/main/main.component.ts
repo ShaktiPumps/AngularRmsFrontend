@@ -2,6 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { egretAnimations } from 'app/shared/animations/egret-animations';
 import { LayoutService } from 'app/shared/services/layout.service';
 import { MatSnackBar as MatSnackBar } from '@angular/material/snack-bar';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { JwtAuthService } from 'app/shared/services/auth/jwt-auth.service';
+import { User } from 'app/shared/models/user.model';
 
 @Component({
   selector: 'app-main',
@@ -9,15 +12,21 @@ import { MatSnackBar as MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./main.component.scss'],
   animations: egretAnimations
 })
+
 export class MainComponent implements OnInit {
+  
 
-  onlineDevices: number = 19929;
-  offlineDevices: number = 5466;
-  disconnectedDevices: number = 323994;
-  allDevices: number = 349398;
-  faultDevices: number = 1022;
+  // onlineDevices: number = 19929;
+  // offlineDevices: number = 5466;
+  // disconnectedDevices: number = 323994;
+  // allDevices: number = 349398;
+  // faultDevices: number = 1022;
 
-
+  onlineDevices: number ;
+  offlineDevices: number ;
+  disconnectedDevices: number ;
+  allDevices: number ;
+  faultDevices: number ;
 
   dailyTrafficChartBar: any;
   monthlyTrafficChartBar: any;
@@ -83,6 +92,8 @@ export class MainComponent implements OnInit {
   ];
   
   constructor(
+    private jwtAuth: JwtAuthService,
+    private http: HttpClient,
     private layout: LayoutService,
     private snack: MatSnackBar
   ) {
@@ -90,10 +101,17 @@ export class MainComponent implements OnInit {
   }
 
   ngOnInit() {
-    setTimeout(() => {
+    //console.log('main  called:', );
+    // setTimeout(() => {
+      //console.log('setTimeout executed');
+          this.getdata();
       // this.layout.publishLayoutChange({sidebarColor: 'dark-blue', topbarColor: 'dark-blue', footerColor: 'dark-blue', matTheme: "egret-navy-dark"});
       // this.snack.open('Layout option changed to {sidebarColor: "dark-blue", topbarColor: "dark-blue", matTheme: "egret-navy-dark"};', 'OK', {duration: 6000})
-    });
+    // }, 2000);
+    // setTimeout(() => {
+    //   // this.layout.publishLayoutChange({sidebarColor: 'dark-blue', topbarColor: 'dark-blue', footerColor: 'dark-blue', matTheme: "egret-navy-dark"});
+    //   // this.snack.open('Layout option changed to {sidebarColor: "dark-blue", topbarColor: "dark-blue", matTheme: "egret-navy-dark"};', 'OK', {duration: 6000})
+    // });
 
     this.dailyTrafficChartBar = {
       legend: {
@@ -510,6 +528,42 @@ export class MainComponent implements OnInit {
       ]
     };
   }
+  // private onOffApiUrl = 'http://localhost:3000/OnOff'; // Your API endpoint
+  private ApiUrl = 'http://localhost:9880/RMS/dashboard'; // Your API endpoint
+  headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.jwtAuth.getJwtToken);
+  // const cList = this.jwtAuth.getUser()?.clientIdList;
+  //  arr:[] =this.jwtAuth.getUser()?.clientIdList;
+
+   currentUser: User = this.jwtAuth.getUser();
+    // clientIdListString: string = this.currentUser.clientIdList?.join(',');
+    // console.log('clientIdList:', this.currentUser.clientIdList);
+// console.log('Is clientIdList an array?',Array.isArray(this.currentUser.clientIdList));
+
+     clientIdListString: string = Array.isArray(this.currentUser.clientIdList)? this.currentUser.clientIdList.join(','): '';
+getdata() { 
+
+    console.log(this.jwtAuth.getUser(),      ' main OnOff calling and token : ',this.clientIdListString);
+    this.http.post<ApiResponse>(`${this.ApiUrl}/DeviceOnOff`, { cliientList: this.currentUser.clientIdList }, { headers: this.headers }).subscribe({
+
+      next: (resp) => {
+        // Handle the successful response
+        console.log('API response: ',  resp.response);
+      this.allDevices = resp.response.All;
+      this.disconnectedDevices=resp.response.Disconnected;
+      this.offlineDevices=resp.response.Offline;
+      this.onlineDevices=resp.response.online;
+      this.faultDevices=resp.response.fault;
+        // this.globalDataService.setGlobalData(response);  // Store user data globally
+      },
+      error: (error) => {
+        // Handle error, e.g., invalid credentials
+        console.error('Login failed:', error);
+      },
+      complete: () => {
+        console.log('Request completed');
+      }
+    });
+  }
   ngOnDestroy() {
     setTimeout(() => {
       // this.layout.publishLayoutChange({sidebarColor: 'slate', topbarColor: 'white', footerColor: 'slate', matTheme: "egret-navy"});
@@ -517,4 +571,12 @@ export class MainComponent implements OnInit {
 
     });
   }
+}
+
+
+// Interface moved outside the component class
+export interface ApiResponse {
+  response: any;
+  status: string;
+  message: string;
 }
