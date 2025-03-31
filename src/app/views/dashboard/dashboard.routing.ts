@@ -20,12 +20,12 @@ export const DashboardRoutes: Routes = [
     path: 'realtime',
     component: RealtimeComponent,
   },  
-  // {
-  //   path: 'settingpara',
-  //   component: SettingParaComponent
-  // }
   {
     path: 'settingpara',
-    loadComponent: () => import('./setting-para/setting-para.component').then(m => m.SettingParaComponent) // ✅ Correct way to load standalone component
+    component: SettingParaComponent
   }
+  // {
+  //   path: 'settingpara',
+  //   loadComponent: () => import('./setting-para/setting-para.component').then(m => m.SettingParaComponent) // ✅ Correct way to load standalone component
+  // }
 ];

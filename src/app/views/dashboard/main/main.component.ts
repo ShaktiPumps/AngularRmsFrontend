@@ -5,90 +5,90 @@ import { MatSnackBar as MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { JwtAuthService } from 'app/shared/services/auth/jwt-auth.service';
 import { User } from 'app/shared/models/user.model';
+import { interval, Subscription, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss'],
-  animations: egretAnimations
+  animations: egretAnimations,
 })
-
-export class MainComponent implements OnInit {
-  
-
+export class MainComponent implements OnInit, OnDestroy {
   // onlineDevices: number = 19929;
   // offlineDevices: number = 5466;
   // disconnectedDevices: number = 323994;
   // allDevices: number = 349398;
   // faultDevices: number = 1022;
-
-  onlineDevices: number ;
-  offlineDevices: number ;
-  disconnectedDevices: number ;
-  allDevices: number ;
-  faultDevices: number ;
+  
+  onlineDevices: number;
+  offlineDevices: number;
+  disconnectedDevices: number;
+  allDevices: number;
+  faultDevices: number;
+  globalDataService: any;
 
   dailyTrafficChartBar: any;
   monthlyTrafficChartBar: any;
   dailyBandwithUsage: any;
   trafficGrowthChart: any;
+
   countryTrafficStats = [
     {
-      country: "US",
+      country: 'US',
       visitor: 14040,
       pageView: 10000,
       download: 1000,
       bounceRate: 30,
-      flag: "flag-icon-us"
+      flag: 'flag-icon-us',
     },
     {
-        country: "India",
-        visitor: 12500,
-        pageView: 10000,
-        download: 1000,
-        bounceRate: 45,
-        flag: "flag-icon-in"
+      country: 'India',
+      visitor: 12500,
+      pageView: 10000,
+      download: 1000,
+      bounceRate: 45,
+      flag: 'flag-icon-in',
     },
     {
-        country: "UK",
-        visitor: 11000,
-        pageView: 10000,
-        download: 1000,
-        bounceRate: 50,
-        flag: "flag-icon-gb"
+      country: 'UK',
+      visitor: 11000,
+      pageView: 10000,
+      download: 1000,
+      bounceRate: 50,
+      flag: 'flag-icon-gb',
     },
     {
-        country: "Brazil",
-        visitor: 4000,
-        pageView: 10000,
-        download: 1000,
-        bounceRate: 30,
-        flag: "flag-icon-br"
+      country: 'Brazil',
+      visitor: 4000,
+      pageView: 10000,
+      download: 1000,
+      bounceRate: 30,
+      flag: 'flag-icon-br',
     },
     {
-        country: "Spain",
-        visitor: 4000,
-        pageView: 10000,
-        download: 1000,
-        bounceRate: 45,
-        flag: "flag-icon-es"
+      country: 'Spain',
+      visitor: 4000,
+      pageView: 10000,
+      download: 1000,
+      bounceRate: 45,
+      flag: 'flag-icon-es',
     },
     {
-        country: "Mexico",
-        visitor: 4000,
-        pageView: 10000,
-        download: 1000,
-        bounceRate: 70,
-        flag: "flag-icon-mx"
+      country: 'Mexico',
+      visitor: 4000,
+      pageView: 10000,
+      download: 1000,
+      bounceRate: 70,
+      flag: 'flag-icon-mx',
     },
     {
-        country: "Russia",
-        visitor: 4000,
-        pageView: 10000,
-        download: 1000,
-        bounceRate: 40,
-        flag: "flag-icon-ru"
-    }
+      country: 'Russia',
+      visitor: 4000,
+      pageView: 10000,
+      download: 1000,
+      bounceRate: 40,
+      flag: 'flag-icon-ru',
+    },
   ];
   
   constructor(
@@ -96,485 +96,421 @@ export class MainComponent implements OnInit {
     private http: HttpClient,
     private layout: LayoutService,
     private snack: MatSnackBar
-  ) {
-    
-  }
+  ) {}
+
+// 7F-0135-0-13-06-23-0
 
   ngOnInit() {
-    //console.log('main  called:', );
-    // setTimeout(() => {
-      //console.log('setTimeout executed');
-          this.getdata();
-      // this.layout.publishLayoutChange({sidebarColor: 'dark-blue', topbarColor: 'dark-blue', footerColor: 'dark-blue', matTheme: "egret-navy-dark"});
-      // this.snack.open('Layout option changed to {sidebarColor: "dark-blue", topbarColor: "dark-blue", matTheme: "egret-navy-dark"};', 'OK', {duration: 6000})
-    // }, 2000);
-    // setTimeout(() => {
-    //   // this.layout.publishLayoutChange({sidebarColor: 'dark-blue', topbarColor: 'dark-blue', footerColor: 'dark-blue', matTheme: "egret-navy-dark"});
-    //   // this.snack.open('Layout option changed to {sidebarColor: "dark-blue", topbarColor: "dark-blue", matTheme: "egret-navy-dark"};', 'OK', {duration: 6000})
+    
+    this.getdata();
+
+    this.refreshSubscription = interval(10000)
+      .pipe(switchMap(async () => this.getdata()))
+      .subscribe();
+
+    //  setTimeout(() => {
+    //   this.layout.publishLayoutChange({
+    //     sidebarColor: 'dark-blue',
+    //     topbarColor: 'dark-blue',
+    //     footerColor: 'dark-blue',
+    //     matTheme: "egret-navy-dark"
+    //   });
+    //   this.snack.open('Layout updated!', 'OK', { duration: 1500 });
     // });
 
     this.dailyTrafficChartBar = {
       legend: {
-        show: false
+        show: false,
       },
       grid: {
-        left: "8px",
-        right: "8px",
-        bottom: "0",
-        top: "0",
-        containLabel: true
+        left: '8px',
+        right: '8px',
+        bottom: '0',
+        top: '0',
+        containLabel: true,
       },
       tooltip: {
         show: true,
-        backgroundColor: "rgba(0, 0, 0, .8)"
+        backgroundColor: 'rgba(0, 0, 0, .8)',
       },
       xAxis: [
         {
-          type: "category",
+          type: 'category',
           data: ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
           // data: ["1", "2", "3", "4", "5", "6", "7"],
           axisTick: {
-            show: false
+            show: false,
           },
           splitLine: {
-            show: false
+            show: false,
           },
           axisLine: {
-            show: false
+            show: false,
           },
           axisLabel: {
-            color: "#fff"
-          }
-        }
+            color: '#fff',
+          },
+        },
       ],
       yAxis: [
         {
-          type: "value",
+          type: 'value',
           axisLabel: {
             show: false,
-            formatter: "${value}"
+            formatter: '${value}',
           },
           min: 0,
           max: 100000,
           interval: 25000,
           axisTick: {
-            show: false
+            show: false,
           },
           axisLine: {
-            show: false
+            show: false,
           },
           splitLine: {
             show: false,
-            interval: "auto"
-          }
-        }
+            interval: 'auto',
+          },
+        },
       ],
 
       series: [
         {
-          name: "Online",
+          name: 'Online',
           data: [35000, 69000, 22500, 60000, 50000, 50000, 30000],
-          label: { show: false, color: "#0168c1" },
-          type: "bar",
-          barWidth: "8",
-          color: "#f6be1a",
+          label: { show: false, color: '#0168c1' },
+          type: 'bar',
+          barWidth: '8',
+          color: '#f6be1a',
           smooth: true,
           itemStyle: {
-            barBorderRadius: 10
-          }
-        }
-      ]
+            barBorderRadius: 10,
+          },
+        },
+      ],
     };
     this.monthlyTrafficChartBar = {
       tooltip: {
-        trigger: "axis",
+        trigger: 'axis',
 
         axisPointer: {
-          animation: true
-        }
+          animation: true,
+        },
       },
       grid: {
-        left: "0",
-        top: "4%",
-        right: "0",
-        bottom: "0"
+        left: '0',
+        top: '4%',
+        right: '0',
+        bottom: '0',
       },
       xAxis: {
-        type: "category",
+        type: 'category',
         boundaryGap: false,
         data: [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sept",
-          "Oct",
-          "Nov",
-          "Dec"
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sept',
+          'Oct',
+          'Nov',
+          'Dec',
         ],
         axisLabel: {
-          show: false
+          show: false,
         },
         axisLine: {
           lineStyle: {
-            show: false
-          }
+            show: false,
+          },
         },
         axisTick: {
-          show: false
+          show: false,
         },
         splitLine: {
-          show: false
-        }
+          show: false,
+        },
       },
       yAxis: {
-        type: "value",
+        type: 'value',
         min: 0,
         max: 200,
         interval: 50,
         axisLabel: {
-          show: false
+          show: false,
         },
         axisLine: {
-          show: false
+          show: false,
         },
         axisTick: {
-          show: false
+          show: false,
         },
         splitLine: {
-          show: false
-        }
+          show: false,
+        },
       },
       series: [
         {
-          name: "Visit",
-          type: "line",
+          name: 'Visit',
+          type: 'line',
           smooth: true,
           data: [
-            140,
-            135,
-            95,
-            115,
-            95,
-            126,
-            93,
-            145,
-            115,
-            140,
-            135,
-            95,
-            115,
-            95,
-            126,
-            125,
-            145,
-            115,
-            140,
-            135,
-            95,
-            115,
-            95,
-            126,
-            93,
-            145,
-            115,
-            140,
-            135,
-            95
+            140, 135, 95, 115, 95, 126, 93, 145, 115, 140, 135, 95, 115, 95,
+            126, 125, 145, 115, 140, 135, 95, 115, 95, 126, 93, 145, 115, 140,
+            135, 95,
           ],
           symbolSize: 8,
           showSymbol: false,
           lineStyle: {
             opacity: 0,
-            width: 0
+            width: 0,
           },
           itemStyle: {
-            borderColor: "#f6be1a"
+            borderColor: '#f6be1a',
           },
           areaStyle: {
-            color: "#f6be1a",
-            opacity: 1
-          }
+            color: '#f6be1a',
+            opacity: 1,
+          },
         },
         {
-          name: "Sales",
-          type: "line",
+          name: 'Sales',
+          type: 'line',
           smooth: true,
           data: [
-            50,
-            70,
-            65,
-            84,
-            75,
-            80,
-            70,
-            50,
-            70,
-            65,
-            104,
-            75,
-            80,
-            70,
-            50,
-            70,
-            65,
-            94,
-            75,
-            80,
-            70,
-            50,
-            70,
-            65,
-            86,
-            75,
-            80,
-            70,
-            50,
-            70
+            50, 70, 65, 84, 75, 80, 70, 50, 70, 65, 104, 75, 80, 70, 50, 70, 65,
+            94, 75, 80, 70, 50, 70, 65, 86, 75, 80, 70, 50, 70,
           ],
           symbolSize: 8,
           showSymbol: false,
           lineStyle: {
             opacity: 0,
-            width: 0
+            width: 0,
           },
           itemStyle: {
-            borderColor: "#e91f63"
+            borderColor: '#e91f63',
           },
           areaStyle: {
-            color: "#e91f63",
-            opacity: 1
-          }
-        }
-      ]
+            color: '#e91f63',
+            opacity: 1,
+          },
+        },
+      ],
     };
 
     this.dailyBandwithUsage = {
       grid: {
-        left: "3%",
-        right: "4%",
-        bottom: "3%",
-        containLabel: true
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true,
       },
-      color: ["#00a65a","#fcc02e", "#e91f63", "#f44336"],
+      color: ['#00a65a', '#fcc02e', '#e91f63', '#f44336'],
       tooltip: {
         show: true,
-        trigger: "item",
-        formatter: "{a} <br/>{b}: {c} ({d}%)"
+        trigger: 'item',
+        formatter: '{a} <br/>{b}: {c} ({d}%)',
       },
       xAxis: [
         {
           axisLine: {
-            show: false
+            show: false,
           },
           splitLine: {
-            show: false
-          }
-        }
+            show: false,
+          },
+        },
       ],
       yAxis: [
         {
           axisLine: {
-            show: false
+            show: false,
           },
           splitLine: {
-            show: false
-          }
-        }
+            show: false,
+          },
+        },
       ],
 
       series: [
         {
-          name: "Sessions",
-          type: "pie",
-          radius: ["50%", "85%"],
-          center: ["50%", "50%"],
+          name: 'Sessions',
+          type: 'pie',
+          radius: ['50%', '85%'],
+          center: ['50%', '50%'],
           avoidLabelOverlap: false,
           hoverOffset: 5,
           stillShowZeroSum: false,
           label: {
             normal: {
               show: false,
-              position: "center",
+              position: 'center',
               textStyle: {
-                fontSize: "13",
-                fontWeight: "normal"
+                fontSize: '13',
+                fontWeight: 'normal',
               },
-              formatter: "{a}"
+              formatter: '{a}',
             },
             emphasis: {
               show: true,
               textStyle: {
-                fontSize: "15",
-                fontWeight: "normal",
-                color: "white"
+                fontSize: '15',
+                fontWeight: 'normal',
+                color: 'white',
               },
-              formatter: "{b} \n{c} ({d}%)"
-            }
+              formatter: '{b} \n{c} ({d}%)',
+            },
           },
           labelLine: {
             normal: {
-              show: false
-            }
+              show: false,
+            },
           },
           data: [
             {
               value: 235,
-              name: "online"
+              name: 'online',
             },
             {
               value: 105,
-              name: "connected"
+              name: 'connected',
             },
             {
               value: 410,
-              name: "disconnected"
+              name: 'disconnected',
             },
-            { value: 148, name: "fault" }
+            { value: 148, name: 'fault' },
           ],
           itemStyle: {
             emphasis: {
               shadowBlur: 10,
               shadowOffsetX: 0,
-              shadowColor: "rgba(0, 0, 0, 0.5)"
-            }
-          }
-        }
-      ]
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+            },
+          },
+        },
+      ],
     };
 
     this.trafficGrowthChart = {
       tooltip: {
-        trigger: "axis",
+        trigger: 'axis',
 
         axisPointer: {
-          animation: true
-        }
+          animation: true,
+        },
       },
       grid: {
-        left: "0",
-        top: "0",
-        right: "0",
-        bottom: "0"
+        left: '0',
+        top: '0',
+        right: '0',
+        bottom: '0',
       },
       xAxis: {
-        type: "category",
+        type: 'category',
         boundaryGap: false,
-        data: [
-          "0",
-          "1",
-          "2",
-          "3",
-          "4",
-          
-        ],
+        data: ['0', '1', '2', '3', '4'],
         axisLabel: {
-          show: false
+          show: false,
         },
         axisLine: {
           lineStyle: {
-            show: false
-          }
+            show: false,
+          },
         },
         axisTick: {
-          show: false
+          show: false,
         },
         splitLine: {
-          show: false
-        }
+          show: false,
+        },
       },
       yAxis: {
-        type: "value",
+        type: 'value',
         min: 0,
         max: 200,
         interval: 50,
         axisLabel: {
-          show: false
+          show: false,
         },
         axisLine: {
-          show: false
+          show: false,
         },
         axisTick: {
-          show: false
+          show: false,
         },
         splitLine: {
-          show: false
-        }
+          show: false,
+        },
       },
       series: [
         {
-          name: "Visit",
-          type: "line",
+          name: 'Visit',
+          type: 'line',
           smooth: false,
           data: [0, 40, 140, 90, 160],
           symbolSize: 8,
           showSymbol: false,
           lineStyle: {
             opacity: 0,
-            width: 0
+            width: 0,
           },
           itemStyle: {
-            borderColor: "#fcc02e"
+            borderColor: '#fcc02e',
           },
           areaStyle: {
             color: '#f44336',
-            opacity: 1
-          }
-        }
-      ]
+            opacity: 1,
+          },
+        },
+      ],
     };
   }
-  // private onOffApiUrl = 'http://localhost:3000/OnOff'; // Your API endpoint
-  private ApiUrl = 'http://localhost:9880/RMS/dashboard'; // Your API endpoint
-  headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.jwtAuth.getJwtToken);
-  // const cList = this.jwtAuth.getUser()?.clientIdList;
-  //  arr:[] =this.jwtAuth.getUser()?.clientIdList;
 
-   currentUser: User = this.jwtAuth.getUser();
-    // clientIdListString: string = this.currentUser.clientIdList?.join(',');
-    // console.log('clientIdList:', this.currentUser.clientIdList);
-// console.log('Is clientIdList an array?',Array.isArray(this.currentUser.clientIdList));
+  private ApiUrl = 'http://localhost:9880/RMS/dashboard';
+  private refreshSubscription: Subscription;
+  private headers = new HttpHeaders().set('Authorization','Bearer ' + this.jwtAuth.getJwtToken);
+  private currentUser: User = this.jwtAuth.getUser();
+  private clientIdListString: string = Array.isArray(this.currentUser.clientIdList) ? this.currentUser.clientIdList.join(','): '';
 
-     clientIdListString: string = Array.isArray(this.currentUser.clientIdList)? this.currentUser.clientIdList.join(','): '';
-getdata() { 
+  getdata() {
+    console.log(this.jwtAuth.getUser(),'main OnOff calling and token : ', this.clientIdListString );
 
-    console.log(this.jwtAuth.getUser(),      ' main OnOff calling and token : ',this.clientIdListString);
-    this.http.post<ApiResponse>(`${this.ApiUrl}/DeviceOnOff`, { cliientList: this.currentUser.clientIdList }, { headers: this.headers }).subscribe({
-
-      next: (resp) => {
-        // Handle the successful response
-        console.log('API response: ',  resp.response);
-      this.allDevices = resp.response.All;
-      this.disconnectedDevices=resp.response.Disconnected;
-      this.offlineDevices=resp.response.Offline;
-      this.onlineDevices=resp.response.online;
-      this.faultDevices=resp.response.fault;
-        // this.globalDataService.setGlobalData(response);  // Store user data globally
-      },
-      error: (error) => {
-        // Handle error, e.g., invalid credentials
-        console.error('Login failed:', error);
-      },
-      complete: () => {
-        console.log('Request completed');
-      }
-    });
+    this.http.post<ApiResponse>(`${this.ApiUrl}/DeviceOnOff`,
+        { cliientList: this.currentUser.clientIdList },
+        { headers: this.headers }
+      )
+      .subscribe({
+        next: (resp) => {
+          console.log('API response: ', resp.response);
+          this.allDevices = resp.response.All;
+          this.disconnectedDevices = resp.response.Disconnected;
+          this.offlineDevices = resp.response.Offline;
+          this.onlineDevices = resp.response.online;
+          this.faultDevices = resp.response.fault;
+          // this.globalDataService.setGlobalData(resp);  // Store user data globally
+        },
+        error: (error) => {
+          console.error('Login failed:', error);
+        },
+        complete: () => {
+          console.log('Request completed');
+        },
+      });
   }
-  ngOnDestroy() {
-    setTimeout(() => {
-      // this.layout.publishLayoutChange({sidebarColor: 'slate', topbarColor: 'white', footerColor: 'slate', matTheme: "egret-navy"});
-      // this.snack.open('Layout option changed {sidebarColor: "black", topbarColor: "white"};', 'OK', {duration: 6000})
 
-    });
+  ngOnDestroy() {
+    if (this.refreshSubscription) {
+      this.refreshSubscription.unsubscribe();
+    }
   }
 }
 
-
-// Interface moved outside the component class
 export interface ApiResponse {
   response: any;
   status: string;

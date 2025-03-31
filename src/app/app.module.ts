@@ -5,7 +5,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LayoutModule } from '@angular/cdk/layout';
 import { MatCardModule } from '@angular/material/card';
 import { DataReportComponent } from './views/reports/sun-shakti/data-report/data-report.component';
-// import { GestureConfig } from '@angular/material/core';
+import { FormsModule } from '@angular/forms';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {
   PerfectScrollbarModule,
   PERFECT_SCROLLBAR_CONFIG,
@@ -26,10 +27,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ErrorHandlerService } from './shared/services/error-handler.service';
 import { TokenInterceptor } from './shared/interceptors/token.interceptor';
 import { MatChipsModule as MatChipsModule } from '@angular/material/chips';
-// import { FormsModule } from '@angular/forms';
-
-
-// AoT requires an exported function for factories
+import { MatDialogModule } from '@angular/material/dialog';
 export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient);
 }
@@ -47,7 +45,9 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     LayoutModule,
     MatCardModule,
     MatChipsModule,
-    // FormsModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    FormsModule,
     DataReportComponent,
     PerfectScrollbarModule,
     TranslateModule.forRoot({

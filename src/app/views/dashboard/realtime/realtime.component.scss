@@ -95,6 +95,12 @@ input:checked + .slider:before {
   margin-top: 10px; 
 }
 
+.snackbar-error {
+  background-color: red;
+  color: white;
+  font-weight: bold;
+}
+
 .circle {
   width: 15px;
   height: 15px;
@@ -135,3 +141,4 @@ input:checked + .slider:before {
 .mat-row:hover {
   background-color: #f9f9f9;
 }
+

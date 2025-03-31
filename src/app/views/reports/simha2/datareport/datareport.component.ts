@@ -6,7 +6,7 @@ import { MatTableDataSource as MatTableDataSource } from '@angular/material/tabl
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-datareport',
@@ -16,7 +16,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   styleUrl: './datareport.component.scss',
   animations: [
     trigger('animate', [
-      // ✅ Define the "animate" trigger
       transition(':enter', [
         style({ opacity: 0 }),
         animate('300ms ease-in', style({ opacity: 1 })),
@@ -26,20 +25,22 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   ],
 })
 export class DatareportComponent implements OnInit {
+
   displayedColumns: string[] = [];
   dataSource = new MatTableDataSource<any>();
   columnConfig: any[] = [];
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private tableService: TablesService, private fb: FormBuilder) {}
+  constructor(private tableService: TablesService) {}
 
   ngOnInit() {
     this.columnConfig = this.tableService.getDataConf();
     this.displayedColumns = this.tableService
       .getDataConf()
       .map((col) => col.prop);
-    this.tableService.apiResponse$.subscribe((data) => {
+    this.tableService.apiResponse$1.subscribe((data) => {
       if (!data || !Array.isArray(data) || data.length === 0) {
         console.warn('No data returned from API');
         this.dataSource.data = [];
@@ -55,8 +56,4 @@ export class DatareportComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
-  // ngAfterViewInit() {
-  //   this.dataSource.paginator = this.paginator;
-  //   this.dataSource.sort = this.sort;
-  // }
 }

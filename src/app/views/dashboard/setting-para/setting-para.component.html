@@ -1,71 +1,76 @@
+<!-- <div *ngIf="isLoading" class="loader-overlay">
+  <div class="loader"></div>
+</div>   -->
+<!-- <div class="loader-overlay" *ngIf="isLoading">
+  <div class="loader"></div>
+</div> -->
+
+<div *ngIf="isLoading" class="overlay">
+  <div class="loader"></div>
+</div>
+
 <div *ngIf="apiData?.response?.length; else noData">
-
-    <div class="category-tabs">
-      <button
-        *ngFor="let category of apiData.response"
-        (click)="selectCategory(category)"
-        [class.active]="selectedCategory === category"
-      >
-        {{ category.parametername }}
-      </button>
-    </div>
-
-    <div class="table-container" *ngIf="selectedCategory">
-      <h3>{{ selectedCategory.parametername }}</h3>
+  <div class="category-tabs">
+    <button
+      *ngFor="let category of apiData.response"
+      (click)="selectCategory(category)"
+      [class.active]="selectedCategory === category"
+    >
+      {{ category.parametername }}
+    </button>
+  </div>
   
-      <table>
-        <thead>
-          <tr>
-            <th *ngFor="let key of getKeys(selectedCategory.parameterList[0])">
-              {{ key }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let param of selectedCategory.parameterList">
-            <td *ngFor="let key of getKeys(param)">
-              {{ param[key] }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="action-buttons">
+    <button class="feed-on-btn" (click)="feedOn()">Feed On</button>
+    <button class="feed-off-btn" (click)="feedOff()">Feed Off</button>
+    <button class="read-all-btn" (click)="readAllParameters()">Read All</button>
   </div>
 
-  <ng-template #noData>
-    <p>No data available.</p>
-  </ng-template>
-  
-
-
-
-
-<!-- <div *ngIf="apiData?.response?.length; else noData">
-    <div *ngFor="let category of apiData.response">
-      <h3>{{ category.parametername }}</h3>
-      <div class="table-container">
-        <table border="2" cellspacing="0" cellpadding="5">
-          <thead>
-            <tr>
-              <th *ngFor="let key of getKeys(category.parameterList[0])">
-                {{ key }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let param of category.parameterList">
-              <td *ngFor="let key of getKeys(param)">
-                {{ param[key] }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+  <div class="table-container" *ngIf="selectedCategory">
+    <h3>{{ selectedCategory.parametername }}</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Functional Code</th>
+          <th>Parameter Name</th>
+          <th>Unit</th>
+          <th>Value</th>
+          <th>Operating</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let param of selectedCategory?.parameterList">
+          <td>{{ param.PreName }}</td>
+          <td>{{ param.PName }}</td>
+          <td>{{ param.Punit }}</td>
+          <td>
+            <input
+              [(ngModel)]="param.value"
+              type="text"
+              placeholder="Enter value"
+              [disabled]="!param.editable"
+            />
+          </td>
+          <td>
+            <!-- <span *ngIf="param.isLoading" class="loader-large"></span> -->
+            <div *ngIf="param.isLoading" class="loader-large"></div>
+            <span *ngIf="!param.isLoading">{{ param.result || "" }}</span>
+          </td>
+          <td>
+            <button class="btn read-btn" (click)="readParameter(param)">
+              Read
+            </button>
+            <button class="btn set-btn" (click)="setParameter(param)" [disabled]="!param.editable">
+              Set
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  <ng-template #noData>
-    <p>No data available.</p>
-  </ng-template>
-   -->
+</div>
 
-   
+<ng-template #noData>
+  <p>No data available.</p>
+</ng-template>

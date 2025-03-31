@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { User } from 'app/shared/models/user.model';
-import { Observable } from 'rxjs';
-import { BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 interface ApiResponse {
   status: boolean;
@@ -14,29 +12,38 @@ interface ApiResponse {
   providedIn: 'root',
 })
 export class TablesService {
-  private apiUrl = 'http://localhost:9880/RMS/Device/deviceReport';
+  private apiUrl = 'http://localhost:9880/RMS/Report/deviceReport';
+  private cumulativeApiUrl = 'http://localhost:9880/RMS/Report/simhaCumu';
+  
+  private apiResponseSubject = new BehaviorSubject<any[]>([]);
+  private apiResponseSubject1 = new BehaviorSubject<any>(null);
 
-  private apiResponseSubject = new BehaviorSubject<any>(null);
 
-  apiResponse$ = this.apiResponseSubject.asObservable();
+  apiResponse$1 = this.apiResponseSubject.asObservable();
+  apiResponse$2 = this.apiResponseSubject1.asObservable();
 
   constructor(private http: HttpClient) {}
+
   private reportResponse: any;
-  // reportResponse:any;
   apiResponse: any;
 
   getData(requestData: any): void {
     this.http.post<ApiResponse>(this.apiUrl, requestData).subscribe({
       next: (response: ApiResponse | null) => {
         console.log('Full API Response:', response);
-
-        if (response.status && Array.isArray(response.response)) {
-          const processedData = response.response.map((item) => ({
-            ...item,
-            mdate: item.mdate ? item.mdate.split(' ')[0] : '',
-            mtime: item.mdate ? item.mdate.split(' ')[1] : '',
-          }));
-          // console.log('Processed Data for Table:', processedData);
+  
+        if (response?.status && Array.isArray(response.response)) {
+          const processedData = response.response.map((item) => {
+            const mpvvolt = parseFloat(item.mpvvolt || '0');
+            const mpvcurr = parseFloat(item.mpvcurr || '0');
+            const inputPower = ((mpvvolt * mpvcurr) / 1000).toFixed(2);
+            return {
+              ...item,
+              mdate: item.mdate ? item.mdate.split(' ')[0] : '',
+              mtime: item.mdate ? item.mdate.split(' ')[1] : '',
+              Input: inputPower,
+            };
+          });
           this.apiResponseSubject.next(processedData);
         } else {
           console.warn('Unexpected API response structure', response);
@@ -63,7 +70,7 @@ export class TablesService {
       { prop: 'mlpm', name: 'Flow of Water (LPM)' },
       { prop: 'r4', name: 'PV Voltage (V)' },
       { prop: 'r5', name: 'PV Current (A)' },
-      // { prop: 'Input', name: 'Input Power (kW)' },
+      { prop: 'Input', name: 'Input Power (kW)' },
       { prop: 'mfaultBit', name: 'Fault Bit' },
       { prop: 'minvmodTemp', name: 'INV Module Temp (°C)' },
       { prop: 'mhstemp', name: 'VFD Temp (°C)' },
@@ -79,22 +86,53 @@ export class TablesService {
     console.log('Returning API Data:', this.reportResponse);
     return this.reportResponse;
   }
+
+   getCumulativeData(requestData: any): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>(this.cumulativeApiUrl, requestData);
+  }
+  
+  fetchCumulativeData(requestData: any) {
+    const formattedRequestData = {
+      ...requestData,
+      ClientIdList: Array.isArray(requestData.ClientIdList)
+        ? requestData.ClientIdList.join(', ') // Convert to string
+        : requestData.ClientIdList,
+    };
+  
+    this.getCumulativeData(formattedRequestData).subscribe({
+      next: (response) => {
+        console.log('Cumulative API Response:', response);
+        if (response?.status && Array.isArray(response.response)) {
+          this.reportResponse = response.response;
+          this.apiResponseSubject1.next(response.response);
+        } else {
+          console.warn('Unexpected cumulative API response structure', response);
+          this.apiResponseSubject1.next([]);
+        }
+      },
+      error: (error) => {
+        console.error('Cumulative API Error:', error);
+        this.apiResponseSubject1.next([]);
+      },
+    });
+  }
+  
+  
+
   getCummuConf() {
     return [
-      // { prop: 'id' },
-      { prop: 'device', name: 'device' },
-      { prop: 'dongle', name: 'dongle' },
+      { prop: 'device', name: 'Device No' },
+      { prop: 'dongle', name: 'Dongle No' },
       { prop: 'Date', name: 'Date' },
-      { prop: 'CustomerName', name: 'CustomerName' },
-      { prop: 'TodayEnergy', name: 'TodayEnergy' },
-      { prop: 'Todayflow', name: 'Todayflow' },
-      { prop: 'todayTime', name: 'todayTime' },
+      { prop: 'CustomerName', name: 'Customer Name' },
+      { prop: 'TodayEnergy', name: 'Today Energy' },
+      { prop: 'Todayflow', name: 'Today flow' },
+      { prop: 'todayTime', name: 'Today Time' },
     ];
   }
   getCummuAll() {
     return [
       {
-        // 'id': 1,
         device: '7F-0135-0-13-06-23-0',
         dongle: '99-0135-0-13-06-23-0 ',
         Date: '2024-07-27',
@@ -104,7 +142,6 @@ export class TablesService {
         todayTime: '4',
       },
       {
-        // 'id': 2,
         device: '7F-0135-0-13-06-23-0',
         dongle: '99-0135-0-13-06-23-0 ',
         Date: '2024-07-26',
@@ -114,47 +151,6 @@ export class TablesService {
         todayTime: '4',
       },
       {
-        // 'id': 3,
-        device: '7F-0135-0-13-06-23-0',
-        dongle: '99-0135-0-13-06-23-0 ',
-        Date: '2024-07-25',
-        CustomerName: 'JAMNATION',
-        TodayEnergy: '36.0',
-        Todayflow: '8.6',
-        todayTime: '4',
-      },
-      {
-        // 'id': 4,
-        device: '7F-0135-0-13-06-23-0',
-        dongle: '99-0135-0-13-06-23-0 ',
-        Date: '2024-07-24',
-        CustomerName: 'JAMNATION',
-        TodayEnergy: '36.0',
-        Todayflow: '8.6',
-        todayTime: '4',
-      },
-      {
-        // 'id': 5,
-        device: '7F-0135-0-13-06-23-0',
-        dongle: '99-0135-0-13-06-23-0 ',
-        Date: '2024-07-23',
-        CustomerName: 'JAMNATION',
-        TodayEnergy: '36.0',
-        Todayflow: '8.6',
-        todayTime: '4',
-      },
-      {
-        // 'id': 6,
-        device: '7F-0135-0-13-06-23-0',
-        dongle: '99-0135-0-13-06-23-0 ',
-        Date: '2024-07-22',
-        CustomerName: 'JAMNATION',
-        TodayEnergy: '36.0',
-        Todayflow: '8.6',
-        todayTime: '4',
-      },
-      {
-        // 'id': 7,
         device: '7F-0135-0-13-06-23-0',
         dongle: '99-0135-0-13-06-23-0 ',
         Date: '2024-07-21',

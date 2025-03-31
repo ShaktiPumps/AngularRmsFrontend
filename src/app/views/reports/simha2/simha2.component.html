@@ -4,53 +4,90 @@
   <div class="content">
     <div class="container-fluid p-6 flex justify-center align-center">
       <form [formGroup]="basicForm" (ngSubmit)="onSearch()">
-        <!-- 🔹 Device No. Field -->
         <mat-form-field>
-          <input matInput type="text" formControlName="deviceNo" placeholder="Device No" id="deviceNo" />
-          <div *ngIf="basicForm.controls['deviceNo'].invalid && basicForm.controls['deviceNo'].touched" class="error">
+          <input
+            matInput
+            type="text"
+            formControlName="deviceNo"
+            placeholder="Device No"
+            id="deviceNo"
+          />
+          <div
+            *ngIf="
+              basicForm.controls['deviceNo'].invalid &&
+              basicForm.controls['deviceNo'].touched
+            "
+            class="error"
+          >
             Select the Device No.
           </div>
         </mat-form-field>
-        
 
-        <!-- 🔹 Start Date -->
         <mat-form-field>
-          <input formControlName="startDate" matInput [matDatepicker]="picker" placeholder="Start Date" required (dateChange)="onStartDateChange()" />
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <input
+            formControlName="startDate"
+            matInput
+            [matDatepicker]="picker"
+            placeholder="Start Date"
+            required
+            (dateChange)="onStartDateChange()"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
 
-        <!-- 🔹 End Date (Cannot be before Start Date) -->
         <mat-form-field>
-          <input formControlName="endDate" matInput [matDatepicker]="endpicker" placeholder="End Date" required [min]="minEndDate | date:'yyyy-MM-dd'" />
-          <mat-datepicker-toggle matSuffix [for]="endpicker"></mat-datepicker-toggle>
+          <input
+            formControlName="endDate"
+            matInput
+            [matDatepicker]="endpicker"
+            placeholder="End Date"
+            required
+            [min]="minEndDate | date : 'yyyy-MM-dd'"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="endpicker"
+          ></mat-datepicker-toggle>
           <mat-datepicker #endpicker></mat-datepicker>
-          <div *ngIf="basicForm.controls['endDate'].invalid && basicForm.controls['endDate'].touched" class="error">
+          <div
+            *ngIf="
+              basicForm.controls['endDate'].invalid &&
+              basicForm.controls['endDate'].touched
+            "
+            class="error"
+          >
             End Date should be greater than Start Date.
           </div>
         </mat-form-field>
 
-        <button mat-raised-button class="searchBTN" type="submit">Search</button>
+        <button mat-raised-button class="searchBTN" type="submit">
+          Search
+        </button>
       </form>
     </div>
 
     <div class="content-body">
-      <div class="content-card mat-bg-default" style="padding-right: 10px;">
+      <div class="content-card mat-bg-default" style="padding-right: 10px">
         <mat-tab-group>
           <mat-tab label="Simha Report">
             <app-datareport></app-datareport>
           </mat-tab>
-          <mat-tab label="Simha Cumulative Report">
-            <app-cumulative></app-cumulative>
-          </mat-tab>
+          <mat-tab label="Simha Cumulative Report"> </mat-tab>
+          <app-cumulative
+            [deviceNo]="basicForm.value.deviceNo"
+            [startDate]="basicForm.value.startDate"
+            [endDate]="basicForm.value.endDate"
+            >>
+          </app-cumulative>
         </mat-tab-group>
       </div>
     </div>
   </div>
 </div>
-
-
-
 
 <!-- <div class="page-layout overflow-hidden pb-8">
   <div class="header-bg blue"></div>

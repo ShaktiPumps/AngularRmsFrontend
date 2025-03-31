@@ -1,281 +1,277 @@
-/* Category Tabs */
 .category-tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    padding: 10px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .category-tabs button {
-    padding: 10px 15px;
-    border: none;
-    background: #007bff;
-    color: white;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    border-radius: 5px;
-  }
-  
-  .category-tabs button:hover {
-    background: #0056b3;
-  }
-  
-  .category-tabs button.active {
-    background: #ff7b00;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.category-tabs button {
+  padding: 10px 15px;
+  border: none;
+  background: #007bff;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  border-radius: 5px;
+}
+
+.category-tabs button:hover {
+  background: #0056b3;
+}
+
+.category-tabs button.active {
+  background: #e69c1c;
+  font-weight: bold;
+}
+
+.table-container {
+  max-height: 675px;
+  overflow-x: auto;
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  background: white;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+  font-family: "Arial", sans-serif;
+}
+
+th {
+  background: linear-gradient(to right, #007bff, #0056b3);
+  color: #fff;
+  text-align: left;
+  padding: 12px;
+  font-weight: bold;
+}
+
+td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+  transition: 0.3s ease-in-out;
+}
+
+.table-container::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #007bff;
+  border-radius: 5px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+input {
+  width: 100px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  font-weight: bold;
+  margin: 0 5px;
+  transition: all 0.3s ease;
+}
+
+.read-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.set-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.read-btn:hover {
+  background-color: #e1b034;
+}
+
+.set-btn:hover {
+  background-color: #218838;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+td.result {
+  font-weight: bold;
+  color: #333;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin: 20px 0;
+
+  button {
+    padding: 12px 24px;
+    font-size: 16px;
     font-weight: bold;
-  }
-  
-  /* Scrollable Table */
-  .table-container {
-    max-height: 675px;
-    overflow-x: auto;
-    overflow-y: auto;
-    border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
-    padding: 10px;
-    background: white;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 800px;
-    font-family: 'Arial', sans-serif;
-  }
-  
-  /* Table Headers */
-  th {
-    background: linear-gradient(to right, #007bff, #0056b3);
     color: #fff;
-    text-align: left;
-    padding: 12px;
-    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
   }
-  
-  /* Table Cells */
-  td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
+
+  .feed-on-btn {
+    background-color: #28a745;
+    &:hover {
+      background-color: #218838;
+    }
   }
-  
-  tbody tr:nth-child(even) {
-    background-color: #f8f9fa;
+
+  .feed-off-btn {
+    background-color: #dc3545;
+    &:hover {
+      background-color: #c82333;
+    }
   }
-  
-  tbody tr:nth-child(odd) {
-    background-color: #ffffff;
+
+  .read-all-btn {
+    background-color: #007bff;
+    &:hover {
+      background-color: #0056b3;
+    }
   }
-  
-  tbody tr:hover {
-    background-color: rgba(0, 123, 255, 0.1);
-    transition: 0.3s ease-in-out;
+}
+
+@media (max-width: 600px) {
+  button {
+    padding: 10px 20px;
+    font-size: 14px;
   }
-  
-  /* Scrollbar */
-  .table-container::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+}
+
+.loader-large {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
-  
-  .table-container::-webkit-scrollbar-thumb {
-    background: #007bff;
-    border-radius: 5px;
+  100% {
+    transform: rotate(360deg);
   }
-  
-  .table-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
+}
+
+.loader-small {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+.centered-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+// .loader-overlay {
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   width: 100vw;
+//   height: 100vh;
+//   background: rgba(0, 0, 0, 0.5); // Semi-transparent background
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   z-index: 9999;
+
+//   .loader {
+//     border: 8px solid rgba(255, 255, 255, 0.3);
+//     border-top: 8px solid #ffffff;
+//     border-radius: 50%;
+//     width: 60px;
+//     height: 60px;
+//     animation: spin 1s linear infinite;
+//   }
+// }
+
+// @keyframes spin {
+//   0% { transform: rotate(0deg); }
+//   100% { transform: rotate(360deg); }
+// }
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.loader {
+  border: 8px solid rgba(255, 255, 255, 0.3);
+  border-top: 8px solid #fff;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
   }
-  
-
-
-
-
-// h3 {
-//     color: #333;
-//     font-size: 18px;
-//     text-transform: uppercase;
-//     margin-top: 20px;
-//   }
-  
-//   .table-container {
-//     max-height: 400px;
-//     overflow-x: auto;
-//     overflow-y: auto;
-//     border: 1px solid #ddd;
-//     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-//     padding: 5px;
-//   }
-  
-//   table {
-//     width: 100%;
-//     border-collapse: collapse;
-//     background: #fff;
-//     min-width: 600px; 
-//   }
-  
-//   th {
-//     background-color: #007bff;
-//     color: white;
-//     text-align: left;
-//     padding: 10px;
-//     border: 1px solid #ddd;
-//   }
-  
-//   td {
-//     padding: 10px;
-//     border: 1px solid #ddd;
-//     text-align: left;
-//   }
-  
-//   tbody tr:nth-child(even) {
-//     background-color: #f9f9f9;
-//   }
-  
-//   tbody tr:hover {
-//     background-color: #f1f1f1;
-//     transition: 0.3s;
-//   }
-  
-//   .table-container::-webkit-scrollbar {
-//     width: 8px;
-//     height: 8px;
-//   }
-  
-//   .table-container::-webkit-scrollbar-thumb {
-//     background-color: #888;
-//     border-radius: 4px;
-//   }
-  
-//   .table-container::-webkit-scrollbar-thumb:hover {
-//     background-color: #555;
-//   }
-  
-//   .table-container::-webkit-scrollbar-track {
-//     background-color: #f1f1f1;
-//   }
-  
-//   @media (max-width: 768px) {
-//     table {
-//       font-size: 14px;
-//     }
-    
-//     th, td {
-//       padding: 8px;
-//     }
-//   }
-  
-
-/* Global Styles */
-// h3 {
-//     color: #2c3e50;
-//     font-size: 22px;
-//     font-weight: bold;
-//     text-transform: uppercase;
-//     margin: 20px 0 10px;
-//     letter-spacing: 1px;
-//     border-left: 5px solid #007bff;
-//     padding-left: 10px;
-//   }
-  
-//   /* Scrollable Table Container */
-//   .table-container {
-//     max-height: 450px; /* Vertical scrolling */
-//     overflow-x: auto; /* Horizontal scrolling */
-//     overflow-y: auto;
-//     border-radius: 8px;
-//     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
-//     padding: 10px;
-//     background: #ffffff;
-//     transition: transform 0.3s ease-in-out;
-//   }
-  
-//   .table-container:hover {
-//     transform: scale(1.01); /* Subtle zoom effect on hover */
-//   }
-  
-//   /* Table Styles */
-//   table {
-//     width: 100%;
-//     border-collapse: collapse;
-//     background: linear-gradient(to right, #f8f9fa, #ffffff);
-//     min-width: 800px; /* Ensures table doesn't shrink too much */
-//     font-family: 'Arial', sans-serif;
-//   }
-  
-//   /* Table Headers */
-//   th {
-//     background: linear-gradient(to right, #007bff, #0056b3);
-//     color: #fff;
-//     text-align: left;
-//     padding: 12px;
-//     font-weight: bold;
-//     border-bottom: 2px solid #004085;
-//     text-transform: uppercase;
-//     letter-spacing: 1px;
-//     font-size: 14px;
-//   }
-  
-//   /* Table Data Cells */
-//   td {
-//     padding: 12px;
-//     border-bottom: 1px solid #ddd;
-//     font-size: 16px;
-//     color: #333;
-//   }
-  
-//   /* Alternating Row Colors */
-//   tbody tr:nth-child(even) {
-//     background-color: #f8f9fa;
-//   }
-  
-//   tbody tr:nth-child(odd) {
-//     background-color: #ffffff;
-//   }
-  
-//   /* Row Hover Effect */
-//   tbody tr:hover {
-//     background-color: rgba(0, 123, 255, 0.1);
-//     transition: 0.3s ease-in-out;
-//   }
-  
-//   /* Scrollbar Styles */
-//   .table-container::-webkit-scrollbar {
-//     width: 10px;
-//     height: 10px;
-//   }
-  
-//   .table-container::-webkit-scrollbar-thumb {
-//     background: #007bff;
-//     border-radius: 5px;
-//   }
-  
-//   .table-container::-webkit-scrollbar-thumb:hover {
-//     background: #0056b3;
-//   }
-  
-//   .table-container::-webkit-scrollbar-track {
-//     background: #f1f1f1;
-//   }
-  
-//   /* Responsive Table */
-//   @media (max-width: 768px) {
-//     table {
-//       font-size: 14px;
-//     }
-  
-//     th,
-//     td {
-//       padding: 8px;
-//     }
-//   }
-  
-
-
-
-
-
-  
+  to {
+    transform: rotate(360deg);
+  }
+}

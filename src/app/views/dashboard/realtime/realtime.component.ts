@@ -12,7 +12,10 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { NgApexchartsModule } from 'ng-apexcharts';
-import { DataService } from 'app/shared/services/data.service'; 
+import { DataService } from 'app/shared/services/data.service';
+import { FormsModule } from '@angular/forms';
+import { DeviceOfflineDialogComponent } from './device-offline-dialog/device-offline-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 // import {
 //   ApexAxisChartSeries,
 //   ApexChart,
@@ -56,9 +59,7 @@ const ELEMENT_DATA: PeriodicElement[] = [
     MatIconModule,
     NgxEchartsModule,
     HttpClientModule,
-    RouterLink,
-    MatFormField,
-    MatSlideToggle,
+    FormsModule,
     NgApexchartsModule,
   ],
   templateUrl: './realtime.component.html',
@@ -84,7 +85,6 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
       value: 0.8,
     },
   ];
-  
   // data: any[] = [];
   monthlyTrafficChartBar: any;
   dataSource: any;
@@ -101,23 +101,27 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
   productStatus: string = '';
   pstatusColor: string = '';
 
+  deviceNumber: string = '';
+  isDeviceOnline: boolean = false;
+  
   constructor(
     private cdr: ChangeDetectorRef,
     private snack: MatSnackBar,
     private router: Router,
     private http: HttpClient,
     private dataService: DataService,
+    private snackBar : MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
-  navigateToSettingPara() {
-    this.dataService.getData().subscribe((response) => {
-      this.dataService.setSharedData(response); // Save data in service
-      this.router.navigate(['/dashboard/settingpara']); // Navigate to new component
-    },
-    (error) => {
-      console.error('API Error:', error);
+  searchDevice() {
+    if (!this.deviceNumber || this.deviceNumber.trim() === '') {
+      this.snack.open('Please enter a device number', 'OK', { duration: 3000 });
+      return;
     }
-  );
+
+    console.log('Searching for device:', this.deviceNumber);
+    this.fetchDeviceDisplayComponent(this.deviceNumber);
   }
 
   toggleApiCall(event: any) {
@@ -232,35 +236,54 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
     };
   }
 
-  fetchDeviceDisplayComponent() {
+  // 7F-0135-0-13-06-23-0
+
+  fetchDeviceDisplayComponent(deviceNumber: string) {
     this.isLoading = true;
     this.error = null;
 
     this.http
       .get<any>(
-        'http://localhost:9880/RMS/Device/realTimeDisplay?DeviceNo=7f-0135-0-13-06-23-0'
+        `http://localhost:9880/RMS/Device/realTimeDisplay?DeviceNo=${this.deviceNumber}`
       )
       .subscribe(
         (response) => {
+          console.log("API Response:", response); 
           this.deviceDetails = response.deviceDetails;
-          if (Array.isArray(response)) {
-            this.displayResponse = response.map((item) => ({
-              mpname: item.mpname,
-              value: item.mpindex,
-              unit: item.unit,
-            }));
-          } else if (response && Array.isArray(response.displayResponse)) {
-            this.displayResponse = response.displayResponse.map((item) => ({
-              mpname: item.mpname,
-              value: item.mpindex,
-              unit: item.unit,
-            }));
+
+          if (response.status && response.displayResponse?.length > 0) {
+            this.isDeviceOnline = true;
+
+            if (Array.isArray(response)) {
+              this.displayResponse = response.map((item) => ({
+                mpname: item.mpname,
+                value: item.mpindex,
+                unit: item.unit,
+              }));
+            } else if (response && Array.isArray(response.displayResponse)) {
+              this.displayResponse = response.displayResponse.map((item) => ({
+                mpname: item.mpname,
+                value: item.mpindex,
+                unit: item.unit,
+              }));
+            } else {
+              console.error('Unexpected API response format:', response);
+            }``
+          }else if (response.message === "Failed" || response.message.includes("offline")) {
+            this.isDeviceOnline = false;
+            console.warn("Device is Offline");
+            this.dialog.open(DeviceOfflineDialogComponent, {
+              width: '400px',
+              disableClose: true,
+            });
           } else {
-            console.error('Unexpected API response format:', response);
+            this.isDeviceOnline = false;
           }
+          this.cdr.detectChanges();
         },
         (error) => {
           console.error('Error fetching API data:', error);
+          this.isDeviceOnline = false;
         }
       );
   }
@@ -271,12 +294,14 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
 
     this.http
       .get<any>(
-        'http://localhost:9880/RMS/Device/DataMonitor?DeviceNo=7f-0135-0-13-06-23-0'
+        `http://localhost:9880/RMS/Device/DataMonitor?DeviceNo=${this.deviceNumber}`
       )
       .subscribe(
         (response) => {
-          if (response.status && response.realTimeRespomnse.length > 0) {
-            const realTimeData = response.realTimeRespomnse[0];
+          if (response.status && response.realTimeResponse?.length > 0) {
+            const realTimeData = response.realTimeResponse[0];
+            console.log('Realtime API Response:', realTimeData);
+
             const pvShow = response.pvShow;
             const timestamp = new Date(realTimeData.rmdate).toLocaleString();
             const RMPVVolt = parseFloat(realTimeData.rmpvvolt) || 0;
@@ -298,15 +323,16 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
             }
 
             this.updateChart();
+            this.cdr.detectChanges();
           }
-
-          if (response && response.realTimeRespomnse?.length > 0) {
-            const realTimeData = response.realTimeRespomnse[0];
+          if (response && response.realTimeResponse?.length > 0) {
+            const realTimeData = response.realTimeResponse[0];
             this.currDate = realTimeData.rmdate
               ? new Date(realTimeData.rmdate).toLocaleString()
               : this.defaultDate.toISOString();
             this.productStatus = response.productStatus || '';
             this.pstatusColor = response.pstatusColor || '';
+
             this.cdr.detectChanges();
 
             const apiMapping: { [key: string]: string } = {
@@ -361,6 +387,7 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
               M49: 'rmremark[23]',
               M50: 'rmremark[24]',
             };
+            this.apiData = {};
 
             Object.keys(apiMapping).forEach((key) => {
               const mappedKey = apiMapping[key];
@@ -372,9 +399,9 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
               }
             });
 
+            this.cdr.detectChanges();
+
             console.log('Updated Table Data:', realTimeData);
-          } else {
-            console.error('Unexpected API response format:', response);
           }
         },
         (error) => {
@@ -387,10 +414,23 @@ export class RealtimeComponent implements OnInit, AfterViewInit {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
+  navigateToSettingPara() {
+    this.dataService.getData().subscribe(
+      (response) => {
+        this.dataService.setSharedData(response); // Save data in service
+        this.router.navigate(['/dashboard/settingpara']); // Navigate to new component
+      },
+      (error) => {
+        console.error('API Error:', error);
+      }
+    );
+  }
+
   ngOnInit(): void {
-    this.dataSource = ELEMENT_DATA;
-    this.cdr.detectChanges();
-    this.fetchDeviceDisplayComponent();
+    // this.dataSource = ELEMENT_DATA;
+    // this.cdr.detectChanges();
+    // this.fetchDeviceDisplayComponent();
+    // this.fetchDeviceRealTimeComponent();
   }
   ngOnDestroy(): void {
     if (this.intervalId) {

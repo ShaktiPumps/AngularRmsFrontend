@@ -46,3 +46,70 @@
     ></mat-paginator>
   </div>
 </div>
+
+<!-- 
+<div class="ml-2 mr-2 rtl:ml-2 mt-8 !pb-4">
+  <div class="table-container mat-elevation-z8">
+    <div class="table-wrapper">
+      <div class="table-scroll-container">
+        <table
+          mat-table
+          [dataSource]="dataSource"
+          matSort
+          class="mat-table"
+          *ngIf="dataSource.data.length > 0; else noData"
+        >
+          <ng-container
+            *ngFor="let column of columnConfig"
+            [matColumnDef]="column.prop"
+          >
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              mat-sort-header
+              class="sticky-header"
+            >
+              {{ column.name }}
+            </th>
+            <td mat-cell *matCellDef="let row" [ngClass]="{'input-cell': column.prop === 'Input'}">
+              <ng-container *ngIf="column.prop === 'Input'; else defaultCell">
+                {{ (parseFloat(row.r4) * parseFloat(row.r5) / 1000).toFixed(2) }} kW
+              </ng-container>
+              <ng-template #defaultCell>
+                <ng-container *ngIf="column.prop === 'r4' || column.prop === 'r5'">
+                  {{ row[column.prop] | number: '1.2-2' }}
+                </ng-container>
+                <ng-container *ngIf="column.prop !== 'Input' && column.prop !== 'r4' && column.prop !== 'r5'">
+                  {{ row[column.prop] }}
+                </ng-container>
+              </ng-template>
+            </td>
+          </ng-container>
+
+          <tr
+            mat-header-row
+            *matHeaderRowDef="displayedColumns"
+            class="sticky-header"
+          ></tr>
+
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+      <ng-template #noData>
+        <div class="no-data-message">No Data Available</div>
+      </ng-template>
+    </div>
+
+    <mat-paginator
+      [pageSizeOptions]="[10, 25, 50, 100]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>
+
+<style>
+.input-cell {
+  font-weight: bold;
+  color: #007bff; 
+}
+</style> -->

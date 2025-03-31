@@ -1,20 +1,20 @@
 .rms-circle {
-    background-color: #fcc02e; /* Set background color to a bright yellow */
+  background-color: #fcc02e;
 
-    border-radius: 50%;        /* Make the element circular */
-    height: 40px;              /* Set height to 40px */
-    width: 40px;               /* Set width to 40px */
-    display: flex;             /* Use flexbox for layout */
-    justify-content: center;   /* Center content horizontally */
-    align-items: center;       /* Center content vertically */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for depth */
-    transition: transform 0.3s ease; /* Add a smooth transition for scaling */
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
 }
 
 .rms-circle:hover {
-    transform: scale(1.1); /* Slightly enlarge the element on hover */
+  transform: scale(1.1);
 }
 
 mat-card {
-    flex-wrap: nowrap;
+  flex-wrap: nowrap;
 }

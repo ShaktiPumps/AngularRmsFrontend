@@ -1,75 +1,26 @@
-<!-- <mat-card class="p-0" [@animate]="{ value: '*', params: { scale: '.9', delay: '200ms' } }"> -->
-<div
-  class="flex klass fld"
-  style="display: flex; justify-content: center !important; padding: 10px"
->
-  <div
-    class="flex klass fld"
-    style="
-      display: flex !important;
-      justify-content: center !important;
-      padding: 10px;
-    "
-  >
-    <input matInput placeholder="search" class="inp" />
-    <mat-icon class="my-icon text-black">search</mat-icon>
+<div class="flex klass fld" style="display: flex; justify-content: center; padding: 10px;">
+  <div class="flex klass fld" style="display: flex; justify-content: center; padding: 10px;">
+    <input matInput placeholder="Enter Device Number" class="inp" [(ngModel)]="deviceNumber" />
+    <mat-icon class="my-icon text-black" (click)="searchDevice()">search</mat-icon>
   </div>
 
-  <!-- <button mat-raised-button routerLink="/dashboard/settingpara">More</button> -->
-
-  <!-- <button
-  class="btn"
-  mat-raised-button
-  [routerLink]="['/dashboard/settingpara']" 
-  style="
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 2px;
-    background-color: #0082fe;
-    color: white;
-    box-shadow: -5px 5px 8px gray;
-  "
->
-  More
-</button> -->
-
-<button
-  class="btn"
-  mat-raised-button
-  (click)="navigateToSettingPara()"
-  style="
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 2px;
-    background-color: #0082fe;
-    color: white;
-    box-shadow: -5px 5px 8px gray;
-  "
->
-  More
-</button>
+  <button *ngIf="isDeviceOnline" class="btn" mat-raised-button (click)="navigateToSettingPara()"
+    style="margin-bottom: 10px; padding: 10px; border-radius: 2px; background-color: #0082fe; color: white; box-shadow: -5px 5px 8px gray;">
+    More
+  </button>
 </div>
 
-<mat-card
-  class="p-0"
-  [@animate]="{ value: '*', params: { scale: '.9', delay: '200ms' } }"
->
+
+<mat-card class="p-0">
   <div class="flex flex-wrap">
     <div class="w-full sm:w-1/5 p-4">
       <div class="text-center !pt-4 !pb-4 border-right-light">
         <mat-icon class="text-blue">sports_mma</mat-icon>
         <small class="m-2 text-muted">Device No.</small>
-        <h4 *ngIf="error" class="m-0 text-red-500">{{ error }}</h4>
-        <h5 class="m-0" *ngIf="deviceDetails.deviceType" style="color: blue">
-          {{ deviceDetails.deviceType }}
-        </h5>
-        <h4 class="m-0" *ngIf="deviceDetails.deviceNo" style="color: green">
-          {{ deviceDetails.deviceNo }}
-        </h4>
+        <h4 *ngIf="deviceDetails?.deviceType" style="color: blue">{{ deviceDetails.deviceType }}</h4>
+        <h4 *ngIf="deviceDetails?.deviceNo" style="color: green">{{ deviceDetails.deviceNo }}</h4>
       </div>
     </div>
-
-    <!--  {{dataMonitor.rmdeviceNo}} -->
 
     <div class="w-full sm:w-1/5 p-4">
       <div class="text-center !pt-4 !pb-4 border-right-light">
@@ -84,15 +35,14 @@
       <div class="text-center !pt-4 !pb-4 border-right-light">
         <mat-icon class="text-blue">network_cell</mat-icon>
         <h4 class="m-0">Network</h4>
-        <small class="m-0 text-muted">Network Stength</small>
+        <small class="m-0 text-muted">Network Strength</small>
       </div>
     </div>
+
     <div class="w-full sm:w-1/3 p-4">
       <div class="text-center !pt-4 !pb-4 border-right-light">
         <mat-icon class="text-blue">access_time_filled</mat-icon>
-        <h4 class="m-0">
-          {{ currDate || defaultDate }}
-        </h4>
+        <h4 class="m-0">{{ currDate || defaultDate }}</h4>
         <small class="m-0 text-muted">Date & Time</small>
       </div>
     </div>
@@ -101,16 +51,8 @@
 
 <div class="flex flex-wrap">
   <div class="w-full md:w-1/2 lg:w-2/3 p-4">
-    <div
-      class="table-container mat-elevation-z8"
-      style="max-height: 520px; overflow-y: auto"
-    >
-      <table
-        mat-table
-        [dataSource]="displayResponse"
-        class="mat-elevation-z8"
-        *ngIf="displayResponse.length > 0"
-      >
+    <div class="table-container mat-elevation-z8" style="max-height: 520px; overflow-y: auto;">
+      <table mat-table [dataSource]="displayResponse" class="mat-elevation-z8" *ngIf="displayResponse.length > 0">
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef>Name</th>
           <td mat-cell *matCellDef="let element">{{ element.mpname }}</td>
@@ -118,9 +60,7 @@
 
         <ng-container matColumnDef="value">
           <th mat-header-cell *matHeaderCellDef>Value</th>
-          <td mat-cell *matCellDef="let element" [id]="'M' + element.value">
-            {{ element.value }}
-          </td>
+          <td mat-cell *matCellDef="let element" [id]="'M' + element.value">{{ element.value }}</td>
         </ng-container>
 
         <ng-container matColumnDef="unit">
@@ -129,61 +69,23 @@
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="['name', 'value', 'unit']"></tr>
-        <tr
-          mat-row
-          *matRowDef="let row; columns: ['name', 'value', 'unit']"
-        ></tr>
+        <tr mat-row *matRowDef="let row; columns: ['name', 'value', 'unit']"></tr>
       </table>
     </div>
   </div>
 
-  <div
-    class="w-full md:w-1/2 lg:w-1/3"
-    [@animate]="{
-      value: '*',
-      params: { opacity: '0', y: '40px', delay: '250ms' }
-    }"
-  >
+  <div class="w-full md:w-1/2 lg:w-1/3">
     <mat-card class="p-0">
       <div style="display: flex; justify-content: space-between">
-        <h6 class="ml-4 rtl:mr-4 rtl:ml-4 mt-4">
-          <mat-icon class="text-blue pd-tp-5"> trending_up</mat-icon> Input
-          Power
+        <h6 class="ml-4 mt-4">
+          <mat-icon class="text-blue"> trending_up</mat-icon> Input Power
         </h6>
         <label class="switch">
           <input type="checkbox" (change)="toggleApiCall($event)" />
           <span class="slider"></span>
         </label>
       </div>
-      <div
-        echarts
-        [options]="monthlyTrafficChartBar"
-        [autoResize]="true"
-        style="height: 200px"
-      ></div>
+      <div echarts [options]="monthlyTrafficChartBar" [autoResize]="true" style="height: 200px"></div>
     </mat-card>
   </div>
 </div>
-
-<!-- <div class="w-full sm:w-1/5 p-4">
-    <div class="text-center !pt-4 !pb-4">
-      <mat-icon class="text-orange">compare_arrows</mat-icon>
-      <h4 class="m-0 ">270</h4>
-      <small class="m-0 text-muted">Transactions</small>
-    </div>
-</div> -->
-
-<!-- <div class="w-full md:w-1/2 lg:w-1/3">
-  <mat-card class="p-0">
-    <div style="display: flex; justify-content: space-between">
-      <h6 class="ml-4 rtl:mr-4 rtl:ml-4 mt-4">
-        <mat-icon class="text-blue pd-tp-5"> trending_up</mat-icon> Input Power
-      </h6>
-      <label class="switch">
-        <input type="checkbox" (change)="toggleApiCall($event)" />
-        <span class="slider"></span>
-      </label>
-    </div>
-    <div echarts [options]="monthlyTrafficChartBar" [autoResize]="true" style="height: 216px"></div>
-  </mat-card>
-</div> -->
