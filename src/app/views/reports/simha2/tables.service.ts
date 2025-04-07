@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 interface ApiResponse {
   status: boolean;
@@ -13,14 +13,8 @@ interface ApiResponse {
 })
 export class TablesService {
   private apiUrl = 'http://localhost:9880/RMS/Report/deviceReport';
-  private cumulativeApiUrl = 'http://localhost:9880/RMS/Report/simhaCumu';
-  
   private apiResponseSubject = new BehaviorSubject<any[]>([]);
-  private apiResponseSubject1 = new BehaviorSubject<any>(null);
-
-
-  apiResponse$1 = this.apiResponseSubject.asObservable();
-  apiResponse$2 = this.apiResponseSubject1.asObservable();
+  apiResponse$ = this.apiResponseSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -87,38 +81,6 @@ export class TablesService {
     return this.reportResponse;
   }
 
-   getCumulativeData(requestData: any): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(this.cumulativeApiUrl, requestData);
-  }
-  
-  fetchCumulativeData(requestData: any) {
-    const formattedRequestData = {
-      ...requestData,
-      ClientIdList: Array.isArray(requestData.ClientIdList)
-        ? requestData.ClientIdList.join(', ') // Convert to string
-        : requestData.ClientIdList,
-    };
-  
-    this.getCumulativeData(formattedRequestData).subscribe({
-      next: (response) => {
-        console.log('Cumulative API Response:', response);
-        if (response?.status && Array.isArray(response.response)) {
-          this.reportResponse = response.response;
-          this.apiResponseSubject1.next(response.response);
-        } else {
-          console.warn('Unexpected cumulative API response structure', response);
-          this.apiResponseSubject1.next([]);
-        }
-      },
-      error: (error) => {
-        console.error('Cumulative API Error:', error);
-        this.apiResponseSubject1.next([]);
-      },
-    });
-  }
-  
-  
-
   getCummuConf() {
     return [
       { prop: 'device', name: 'Device No' },
@@ -130,6 +92,7 @@ export class TablesService {
       { prop: 'todayTime', name: 'Today Time' },
     ];
   }
+
   getCummuAll() {
     return [
       {

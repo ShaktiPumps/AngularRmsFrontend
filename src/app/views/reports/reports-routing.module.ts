@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { Simha2Component } from './simha2/simha2.component';
 import { SimhaComponent } from './simha/simha.component';
 import { SunShaktiComponent } from './sun-shakti/sun-shakti.component';
+import { KalpavrikshagridComponent } from './kalpavrikshagrid/kalpavrikshagrid.component';
+import { MainComponent } from '../dashboard/main/main.component';
 
 export const routes: Routes = [
   // {
@@ -23,6 +25,11 @@ export const routes: Routes = [
     path: 'sunShakti',
     component: SunShaktiComponent,
     // data: { title: 'Simha Reports', breadcrumb: 'Simha Reports' }
+  },
+  {
+    path: 'kalpavrikshagrid',
+    component: KalpavrikshagridComponent
+
   },
 ];
 

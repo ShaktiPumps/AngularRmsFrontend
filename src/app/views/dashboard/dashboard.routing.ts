@@ -26,6 +26,6 @@ export const DashboardRoutes: Routes = [
   }
   // {
   //   path: 'settingpara',
-  //   loadComponent: () => import('./setting-para/setting-para.component').then(m => m.SettingParaComponent) // ✅ Correct way to load standalone component
+  //   loadComponent: () => import('./setting-para/setting-para.component').then(m => m.SettingParaComponent) 
   // }
 ];

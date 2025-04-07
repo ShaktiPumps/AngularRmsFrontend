@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { KalpavrikshaComponent } from './kalpavriksha.component';
+import { KalpavrikshagridComponent } from './kalpavrikshagrid.component';
 
-describe('KalpavrikshaComponent', () => {
-  let component: KalpavrikshaComponent;
-  let fixture: ComponentFixture<KalpavrikshaComponent>;
+describe('KalpavrikshagridComponent', () => {
+  let component: KalpavrikshagridComponent;
+  let fixture: ComponentFixture<KalpavrikshagridComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [KalpavrikshaComponent]
+      imports: [KalpavrikshagridComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(KalpavrikshaComponent);
+    fixture = TestBed.createComponent(KalpavrikshagridComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -59,6 +59,8 @@ export class NavigationService {
       sub: [
         {name: 'Simha 2.0 Report', state: 'reports/simha2'},
         {name: 'Simha Report', state: 'reports/simha'},
+        {name: 'Kalpvriksha Grid', state: 'reports/kalpavrikshagrid'},
+        {name: 'Kalpvriksha Hybrid', state: 'reports/kalpavrikshahybrid'},
         {name: 'SunShakti Report', state: 'reports/sunShakti'},
         {name: 'Table variations', state: 'material/table'}
       ]

@@ -40,7 +40,7 @@ export class DatareportComponent implements OnInit {
     this.displayedColumns = this.tableService
       .getDataConf()
       .map((col) => col.prop);
-    this.tableService.apiResponse$1.subscribe((data) => {
+    this.tableService.apiResponse$.subscribe((data) => {
       if (!data || !Array.isArray(data) || data.length === 0) {
         console.warn('No data returned from API');
         this.dataSource.data = [];
