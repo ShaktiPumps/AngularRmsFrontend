@@ -19,6 +19,7 @@ export class KalphybridService {
   private apiUrl2 = 'http://localhost:9880/RMS/Report/kalpHybridCumu';
   apiResponseSubject2 = new BehaviorSubject<any[]>([]);
   apiResponse$2 = this.apiResponseSubject2.asObservable();
+  
 
   constructor(private http: HttpClient) {}
 
