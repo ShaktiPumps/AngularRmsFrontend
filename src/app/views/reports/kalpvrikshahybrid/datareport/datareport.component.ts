@@ -1,12 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { PerfectScrollbarModule } from 'app/shared/components/perfect-scrollbar';
 import { MatTableModule as MatTableModule } from '@angular/material/table';
-import { TablesService } from '../tables.service';
+import { KalphybridService } from '../service/kalphybrid.service';
 import { MatTableDataSource as MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { trigger, transition, style, animate } from '@angular/animations';
-import { FormBuilder } from '@angular/forms';
+import { KALP_HYBRID_COLUMN_CONFIG } from '../column-config';
 
 @Component({
   selector: 'app-datareport',
@@ -14,18 +13,8 @@ import { FormBuilder } from '@angular/forms';
   imports: [PerfectScrollbarModule, MatTableModule, MatPaginator],
   templateUrl: './datareport.component.html',
   styleUrl: './datareport.component.scss',
-  animations: [
-    trigger('animate', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('300ms ease-in', style({ opacity: 1 })),
-      ]),
-      transition(':leave', [animate('300ms ease-out', style({ opacity: 0 }))]),
-    ]),
-  ],
 })
 export class DatareportComponent implements OnInit {
-
   displayedColumns: string[] = [];
   dataSource = new MatTableDataSource<any>();
   columnConfig: any[] = [];
@@ -33,21 +22,37 @@ export class DatareportComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private tableService: TablesService) {}
+  constructor(private kalpService: KalphybridService) {}
+
+  getValue(row: any, prop: string) {
+    const match = prop.match(/^(.+?)\\[(\\d+)\\]$/);
+    if (match) {
+      const [_, key, index] = match;
+      return row[key]?.[+index] ?? '';
+    }
+    return row[prop] ?? '';
+  }
 
   ngOnInit() {
-    this.columnConfig = this.tableService.getDataConf();
-    this.displayedColumns = this.tableService
-      .getDataConf()
-      .map((col) => col.prop);
-    this.tableService.apiResponse$.subscribe((data) => {
+    this.kalpService.apiResponse$.subscribe((data) => {
+      // console.log('🚀 API Response Received:', data);
       if (!data || !Array.isArray(data) || data.length === 0) {
-        // console.warn('No data returned from API');
         this.dataSource.data = [];
+        return;
       }
-      else {
-        this.dataSource.data = data;
-      }
+
+      this.columnConfig = KALP_HYBRID_COLUMN_CONFIG.filter((col) => {
+        if (col.prop.includes('[')) {
+          const match = col.prop.match(/^(.+?)\\[(\\d+)\\]$/);
+          if (!match) return false;
+          const [_, arrayName, indexStr] = match;
+          return Array.isArray(data[0][arrayName]) && data[0][arrayName].length > +indexStr;
+        }
+        return data[0].hasOwnProperty(col.prop);
+      });
+
+      this.displayedColumns = this.columnConfig.map((col) => col.prop);
+      this.dataSource.data = data;
     });
   }
 

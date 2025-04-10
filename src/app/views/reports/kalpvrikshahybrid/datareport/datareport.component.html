@@ -1,0 +1,95 @@
+<div class="ml-2 mr-2 rtl:ml-2 mt-8 !pb-4">
+  <div class="table-container mat-elevation-z8">
+    <div class="table-wrapper">
+      <div class="table-scroll-container">
+        <table
+          mat-table
+          [dataSource]="dataSource"
+          matSort
+          class="mat-table"
+          *ngIf="dataSource.data.length > 0; else noData"
+        >
+          <ng-container
+            *ngFor="let column of columnConfig"
+            [matColumnDef]="column.prop"
+          >
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              mat-sort-header
+              class="sticky-header"
+              [innerHTML]="column.name"
+            ></th>
+            <td mat-cell *matCellDef="let row">
+              {{ getValue(row, column.prop) }}
+            </td>
+          </ng-container>
+
+          <tr
+            mat-header-row
+            *matHeaderRowDef="displayedColumns"
+            class="sticky-header"
+          ></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+
+      <ng-template #noData>
+        <div class="no-data-message">No Data Available</div>
+      </ng-template>
+    </div>
+
+    <mat-paginator
+      [pageSizeOptions]="[5, 10, 15, 20]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>
+
+
+<!-- <div class="ml-2 mr-2 rtl:ml-2 mt-8 !pb-4">
+    <div class="table-container mat-elevation-z8">
+      <div class="table-wrapper">
+        <div class="table-scroll-container">
+          <table
+            mat-table
+            [dataSource]="dataSource"
+            matSort
+            class="mat-table"
+            *ngIf="dataSource.data.length > 0; else noData"
+          >
+            <ng-container
+              *ngFor="let column of columnConfig"
+              [matColumnDef]="column.prop"
+            >
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header
+                class="sticky-header"
+                [innerHTML]="column.name"
+              >
+              </th>
+              <td mat-cell *matCellDef="let row">
+                {{ row[column.prop] }}
+              </td>
+            </ng-container>
+            <tr
+              mat-header-row
+              *matHeaderRowDef="displayedColumns"
+              class="sticky-header"
+            ></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        </div>
+        <ng-template #noData>
+          <div class="no-data-message">No Data Available</div>
+        </ng-template>
+      </div>
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 15, 20]"
+        showFirstLastButtons
+      ></mat-paginator>
+    </div>
+  </div>
+   -->

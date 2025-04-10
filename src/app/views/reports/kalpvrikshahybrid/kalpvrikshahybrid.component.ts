@@ -8,21 +8,23 @@ import { SharedMaterialModule } from 'app/shared/shared-material.module';
 import { PerfectScrollbarModule } from 'app/shared/components/perfect-scrollbar';
 import { DatareportComponent } from './datareport/datareport.component';
 import { CumulativeComponent } from './cumulative/cumulative.component';
-import { TablesService } from './tables.service';
+import { KalphybridService } from './service/kalphybrid.service';
 import * as moment from 'moment';
 import { HttpClient } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 import {
-  AbstractControl,
   FormBuilder,
   FormsModule,
   ReactiveFormsModule,
   UntypedFormGroup,
-  ValidationErrors,
   Validators,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 
 @Component({
-  selector: 'app-simha2',
+  selector: 'app-kalpvrikshahybrid',
   standalone: true,
   imports: [
     MatMenuModule,
@@ -35,12 +37,11 @@ import {
     DatareportComponent,
     CumulativeComponent,
   ],
-  templateUrl: './simha2.component.html',
-  styleUrl: './simha2.component.scss',
+  templateUrl: './kalpvrikshahybrid.component.html',
+  styleUrl: './kalpvrikshahybrid.component.scss',
 })
-export class Simha2Component implements OnInit, OnDestroy {
-  todoList: TodoItem[];
-  tempList: TodoItem[];
+
+export class KalpvrikshahybridComponent implements OnInit, OnDestroy {
   searchTerm: string;
   test: string;
   tagList: TagItem[];
@@ -53,9 +54,10 @@ export class Simha2Component implements OnInit, OnDestroy {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private tablesService: TablesService,
+    private kalService: KalphybridService,
     private fb: FormBuilder,
-    private http: HttpClient
+    private http: HttpClient,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -76,14 +78,14 @@ export class Simha2Component implements OnInit, OnDestroy {
   }
 
   endDateAfterStartDateValidator(group: AbstractControl): ValidationErrors | null {
-      const start = group.get('startDate')?.value;
-      const end = group.get('endDate')?.value;
-  
-      if (!start || !end) return null;
-  
-      return moment(end).isBefore(moment(start)) ? { endBeforeStart: true } : null;
-    }
-  
+    const start = group.get('startDate')?.value;
+    const end = group.get('endDate')?.value;
+
+    if (!start || !end) return null;
+
+    return moment(end).isBefore(moment(start)) ? { endBeforeStart: true } : null;
+  }
+
   ngOnDestroy() {
     this.unsubscribeAll.next(1);
     this.unsubscribeAll.complete();
@@ -108,9 +110,37 @@ export class Simha2Component implements OnInit, OnDestroy {
       startDate: formattedStartDate,
       endDate: formattedEndDate,
       deviceType: formattedDeviceType,
-      ClientIdList:this.tablesService.getClientIdList(),
+      ClientIdList: this.kalService.getClientIdList(),
     };
-    this.tablesService.getData(requestData);
-    this.tablesService.getCumulative(requestData);
+
+    this.kalService.getKalpHybridData(requestData).subscribe({
+      next: (response) => {
+        if (response?.message === 'Failed') {
+          this.snackBar.open('IMEI is duplicate in device no', 'Close', {
+            duration: 4000,
+            verticalPosition: 'top',
+          });
+        }
+  
+        if (response?.status && Array.isArray(response.response)) {
+          const processedData = response.response.map((item) => ({
+            ...item,
+            Date: item.Date ? item.Date.split(' ')[0] : '',
+            Time: item.Time ? item.Time.split(' ')[1] : '',
+          }));
+  
+          this.kalService.apiResponseSubject.next(processedData);
+        } else {
+          this.kalService.apiResponseSubject.next([]);
+        }
+      },
+      error: (err) => {
+        console.error('API Error:', err);
+      }
+    });
+  
+
+    this.kalService.getKalpHybridData(requestData);
+    this.kalService.getKalpHybridCumulative(requestData);
   }
 }

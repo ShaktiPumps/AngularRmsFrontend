@@ -69,29 +69,17 @@ export class SigninComponent implements OnInit, AfterViewInit, OnDestroy {
     .subscribe(response => {
       // Check if the response is successful
       if (response.status) {
-        // console.log("respponse: ",response)
         const { jwtToken, user } = response.response;
         console.log("before setting token:",jwtToken)
         this.jwtAuth.setUserAndToken(jwtToken,  user, true);
-                
-        // // Store the JWT token in localStorage or sessionStorage
-        // localStorage.setItem('jwtToken', response.data.jwtToken);
-
-        // // Optionally store user information for later use
-        // localStorage.setItem('user', JSON.stringify(response.data.user));
-
-        // Redirect user to the appropriate page after login
         this.router.navigateByUrl(this.jwtAuth.return);
       } else {
-        // If the login is unsuccessful, display the error message
         this.errorMsg = response.message;
       }
 
-      // Reset the button and progress bar
       this.submitButton.disabled = false;
       this.progressBar.mode = 'determinate';
     }, err => {
-      // Handle any error from the backend
       this.submitButton.disabled = false;
       this.progressBar.mode = 'determinate';
       this.errorMsg = 'An error occurred while logging in. Please try again.';

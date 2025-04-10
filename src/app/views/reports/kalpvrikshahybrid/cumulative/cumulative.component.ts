@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { PerfectScrollbarModule } from 'app/shared/components/perfect-scrollbar';
 import { MatTableModule as MatTableModule } from '@angular/material/table';
-import { TablesService } from '../tables.service';
+import { KalphybridService } from '../service/kalphybrid.service';
 import { MatTableDataSource as MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -9,13 +9,11 @@ import { MatSort } from '@angular/material/sort';
 @Component({
   selector: 'app-cumulative',
   standalone: true,
-  imports: [PerfectScrollbarModule,MatTableModule,MatPaginator],
+  imports: [PerfectScrollbarModule, MatTableModule, MatPaginator],
   templateUrl: './cumulative.component.html',
   styleUrl: './cumulative.component.scss'
 })
-
-export class CumulativeComponent implements OnInit {
-
+export class CumulativeComponent implements OnInit{
   displayedColumns: string[] = [];
   dataSource = new MatTableDataSource<any>();
   columnConfig: any[] = [];
@@ -23,25 +21,28 @@ export class CumulativeComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private tableService: TablesService) {}
+  constructor(private kalpService: KalphybridService){}
 
   ngOnInit() {
-    this.columnConfig = this.tableService.getCummuConf();
-    this.displayedColumns = this.tableService
-      .getCummuConf()
-      .map((col) => col.prop);
-    this.tableService.apiResponse$2.subscribe((data) => {
+    this.kalpService.apiResponse$2.subscribe((data) => {
       if (!data || !Array.isArray(data) || data.length === 0) {
         // console.warn('No data returned from API');
         this.dataSource.data = [];
-      }
-      else {
+      } else {
+        const firstRow = data[0];
+        this.columnConfig = Object.keys(firstRow).map((key) => ({
+          name: key,
+          prop: key,
+        }));
+        this.displayedColumns = this.columnConfig.map((col) => col.prop);
+        
         this.dataSource.data = data;
       }
     });
-    // this.tableService.getData({});
-  }
 
+    // this.kalpService.getKalpHybridCumulative({});
+  }
+  
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
