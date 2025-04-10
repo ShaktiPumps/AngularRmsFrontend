@@ -20,7 +20,6 @@ export class KalphybridService {
   apiResponseSubject2 = new BehaviorSubject<any[]>([]);
   apiResponse$2 = this.apiResponseSubject2.asObservable();
   
-
   constructor(private http: HttpClient) {}
 
   apiResponse: any;
